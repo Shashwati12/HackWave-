@@ -1,0 +1,17 @@
+{
+  "name": "hackwave-",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+   "scripts": {
+    "dev": "concurrently \"bun run backend-dev\" \"bun run frontend-dev\"",
+    "backend-dev": "cd backend && bun run dev",
+    "frontend-dev": "cd frontend && bun run dev"
+  }
+}
