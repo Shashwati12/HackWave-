@@ -8,7 +8,8 @@ import Schedule from "../pages/Schedule";
 import History from "../pages/History";
 import Analytics from "../components/Host/Analytics";
 import Sponser from "../components/Host/Sponser";
-import Home from "../pages/Home";
+import { Home } from "../pages/Home";
+
 
 export const Routes: AppRoute[] = [
   {
