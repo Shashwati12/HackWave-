@@ -9,7 +9,6 @@ const AdminDashboard = () => {
     { label: "Ratings", path: "allrating", icon: <IconStar className="h-5 w-5" /> },
     { label: "Create User", path: "createUser", icon: <IconUserPlus className="h-5 w-5" /> },
     { label: "Create Store", path: "createStore", icon: <IconPlus className="h-5 w-5" /> },
-    { label: "Profile", path: "adminProfile", icon: <IconUser className="h-5 w-5" /> },
   ];
 
   return <SidebarDemo SiderbarMenu={SiderbarMenu} />;

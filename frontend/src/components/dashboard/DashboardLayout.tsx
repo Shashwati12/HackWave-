@@ -82,7 +82,7 @@ const DashboardLayout = () => {
       </Sidebar>
 
       {/* Main content area */}
-      <div className={`flex-1 ${isProfilePage ? "" : "pt-14"} p-4 md:p-10 overflow-y-auto`}>
+      <div className={`flex-1 ${isProfilePage ? "" : "pt-14"} p-4 md:p-10`}>
         {RoleDashboard ? <RoleDashboard /> : <div>No user dashboard available</div>}
         <Outlet />
       </div>
