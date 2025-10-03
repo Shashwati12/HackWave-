@@ -1,17 +1,14 @@
-import React from 'react'
-import Sidebar from '../components/dashboard/Sidebar';
+"use client";
+import { SidebarDemo } from "../components/dashboard/Sidebar";
 
 const SponserDashboard = () => {
- const SiderbarMenu = [
-    { label: "Event", path: "allevent" },
-    { label: "Schedule", path: "schedule" },
-    { label: "History", path: "history" },
+  const SiderbarMenu = [
+    { label: "Event", path: "allevent", icon: null },
+    { label: "Schedule", path: "schedule", icon: null },
+    { label: "History", path: "history", icon: null },
   ];
-  return (
-    <div>
-            <Sidebar SiderbarMenu ={SiderbarMenu} />
-    </div>
-  )
-}
 
-export default SponserDashboard
+  return <SidebarDemo SiderbarMenu={SiderbarMenu} />;
+};
+
+export default SponserDashboard;

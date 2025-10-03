@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { Eye, EyeOff, UserPlus, Calendar } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
-import { FaTwitter } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 export default function SignUpPage() {
@@ -69,7 +67,7 @@ export default function SignUpPage() {
           onSubmit={handleSubmit}
           className="relative z-10 w-[520px] max-w-[90%] p-10 bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl shadow-2xl flex flex-col gap-6"
         >
-          <h2 className="text-3xl font-bold text-white text-center tracking-wide bg-gradient-to-r from-[#36C1F6] to-[#657FFF] bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold text-center tracking-wide bg-gradient-to-r from-[#36C1F6] to-[#657FFF] bg-clip-text text-transparent">
             Create Account
           </h2>
 

@@ -1,19 +1,17 @@
-import React from 'react'
-import Sidebar from '../components/dashboard/Sidebar';
+"use client";
+import { SidebarDemo } from "../components/dashboard/Sidebar";
+import { IconCalendarEvent, IconPlus, IconClock, IconHistory, IconCertificate } from "@tabler/icons-react";
 
 const VenderDashboard = () => {
-     const SiderbarMenu = [
-    { label: "Event", path: "allevent" },
-    { label: "Host Event", path: "hostEvent" },
-    { label: "Schedule", path: "schedule" },
-    { label: "History", path: "history" },
-    { label: "Certificate", path: "certificate" },
+  const SiderbarMenu = [
+    { label: "Event", path: "allevent", icon: <IconCalendarEvent className="h-5 w-5" /> },
+    { label: "Host Event", path: "hostEvent", icon: <IconPlus className="h-5 w-5" /> },
+    { label: "Schedule", path: "schedule", icon: <IconClock className="h-5 w-5" /> },
+    { label: "History", path: "history", icon: <IconHistory className="h-5 w-5" /> },
+    { label: "Certificate", path: "certificate", icon: <IconCertificate className="h-5 w-5" /> },
   ];
-  return (
-    <div>
-      <Sidebar SiderbarMenu={SiderbarMenu}/>
-    </div>
-  )
-}
 
-export default VenderDashboard
+  return <SidebarDemo SiderbarMenu={SiderbarMenu} />;
+};
+
+export default VenderDashboard;
