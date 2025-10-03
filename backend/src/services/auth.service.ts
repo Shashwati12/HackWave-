@@ -1,7 +1,7 @@
 import supabase from '../config/supabase.config.js';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import {
+import type {
   RegisterData,
   UserProfile,
   UserBasic,

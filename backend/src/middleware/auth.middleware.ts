@@ -1,8 +1,8 @@
-import { Response, NextFunction } from 'express';
+import type { Response, NextFunction } from 'express';
 import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { AuthRequest, AuthUser } from '../types/auth.types';
+import type { AuthRequest, AuthUser } from '../types/auth.types';
 
 export const protect = asyncHandler(
   async (req: AuthRequest, res: Response, next: NextFunction) => {
