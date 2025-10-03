@@ -36,6 +36,8 @@ model Event {
   organizer             String?
   max_participants      Int?
   eligibility           String?
+  judging_criteria      String
+  contact_email         String
 
   teams          Team[]
   team_members   TeamMember[]
@@ -100,11 +102,14 @@ model Discussion {
 
 model Vendor {
   id           Int      @id @default(autoincrement())
+  email        String   @unique
   service_type String?
   name         String
+  password     String
   contact_info String?
-  fees         Decimal? @db.Decimal(10, 2)
+  pledged_amount      Decimal? @db.Decimal(10, 2)
   image_url    String?
+  ratings       Int?
   created_at   DateTime @default(now())
 
   event_vendors     EventVendor[]
@@ -128,7 +133,9 @@ model EventVendor {
 
 model Sponsor {
   id             Int      @id @default(autoincrement())
+  email          String   @unique
   name           String
+  password       String
   contact_info   String?
   pledged_amount Decimal? @db.Decimal(12, 2)
   image_url      String?
