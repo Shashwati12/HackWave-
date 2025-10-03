@@ -78,7 +78,7 @@ model User {
   password      String
   role          Roles     @default(User)
   date_of_birth DateTime?
-  image_url     String
+  image_url     String?
 
   created_at    DateTime  @default(now())
 

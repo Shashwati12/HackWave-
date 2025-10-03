@@ -6,5 +6,5 @@ export const userSchema = z.object({
   password: z.string().min(6),
   gender: z.enum(["male", "female", "other"]),
   role: z.string(),
-  date_of_birth: z.date(),
+  date_of_birth: z.string(),
 });
