@@ -1,5 +1,5 @@
 import type { AppRoute } from "../Type/RoutesType";
-import Home from "../pages/Home";
+import { Home } from "../pages/Home";
 
 
 export const Routes: AppRoute[] = [
@@ -7,8 +7,6 @@ export const Routes: AppRoute[] = [
     path: "/",
     element: <Home />,
     public: true,
-  },{
-    
-  }
+  },
  
 ];
