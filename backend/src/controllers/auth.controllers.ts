@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as authService from '../services/auth.service.js';
 import type { AuthRequest } from '../types/auth.types.js';

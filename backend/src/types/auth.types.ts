@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import  type { Request } from 'express';
 
 export interface AuthUser {
   id: string;
@@ -15,9 +15,8 @@ export interface RegisterData {
   password: string;
   name: string;
   gender: string;
-  stream: string;
+  role: string;
   date_of_birth: string;
-  passing_out_year: number;
 }
 
 export interface UserProfile {
@@ -25,10 +24,8 @@ export interface UserProfile {
   email: string;
   name: string;
   gender: string;
-  stream: string;
+  role: string;
   date_of_birth: string;
-  passing_out_year: number;
-  token?: string;
 }
 
 export interface UserBasic {
