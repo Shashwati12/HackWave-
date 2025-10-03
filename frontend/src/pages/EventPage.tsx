@@ -6,6 +6,7 @@ import {
   FaShareAlt,
 } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import { Background } from "../components/ShootingStar";
 
 type EventType = "Hackathon" | "Workshop" | "Cultural" | "Sports" | "Seminar";
 
@@ -116,8 +117,7 @@ const EventsPage = () => {
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden p-6">
       {/* Background */}
-      <div className="absolute -top-40 -left-40 w-[40rem] h-[40rem] rounded-full bg-gradient-to-r from-[#36C1F6]/50 via-[#16D3AC]/40 to-[#657FFF]/30 filter blur-3xl opacity-50 animate-spin-slow"></div>
-      <div className="absolute -bottom-48 -right-48 w-[36rem] h-[36rem] rounded-full bg-gradient-to-tr from-[#16D3AC]/50 via-[#36C1F6]/40 to-[#657FFF]/30 filter blur-3xl opacity-40 animate-spin-slow"></div>
+<Background />
 
       <h1
         style={{ fontFamily: "Nippo, sans-serif" }}

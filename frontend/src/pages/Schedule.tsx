@@ -253,16 +253,9 @@ export default function Schedule() {
   };
 
   const selectedEvents = selectedDate ? eventsData[selectedDate] : null;
-  const totalEventsThisMonth = Object.keys(eventsData).filter((date) => {
-    const d = new Date(date);
-    return (
-      d.getMonth() === currentDate.getMonth() &&
-      d.getFullYear() === currentDate.getFullYear()
-    );
-  }).length;
 
   return (
-    <div className="min-h-screen bg-black relative overflow-x-hidden overflow-y-auto">
+    <div className="min-h-screen bg-black relative overflow-x-hidden">
       {/* Background Component */}
       <div className="absolute inset-0 z-0">
         <Background />
@@ -283,45 +276,6 @@ export default function Schedule() {
           <p className="text-xl text-[#B0B3C0] leading-relaxed">
             View and manage all your upcoming events in one place
           </p>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-6 mb-8">
-          {/* Stats Cards */}
-          <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-[#B0B3C0] text-sm mb-1">This Month</div>
-                <div className="text-3xl font-bold text-white">{totalEventsThisMonth}</div>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-[#36C1F6]/20 flex items-center justify-center">
-                <Calendar className="w-6 h-6 text-[#36C1F6]" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-[#B0B3C0] text-sm mb-1">Total Attendees</div>
-                <div className="text-3xl font-bold text-white">5.1K</div>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-[#657FFF]/20 flex items-center justify-center">
-                <Users className="w-6 h-6 text-[#657FFF]" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl border border-white/20 p-6 shadow-xl">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-[#B0B3C0] text-sm mb-1">Tickets Sold</div>
-                <div className="text-3xl font-bold text-white">3.9K</div>
-              </div>
-              <div className="w-12 h-12 rounded-xl bg-[#16D3AC]/20 flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-[#16D3AC]" />
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Calendar Card */}
