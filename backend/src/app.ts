@@ -11,8 +11,8 @@ import supabase from "./config/supabase.config";
 
 const app = express();
 
-
 app.use(
+  //@ts-ignore
   cors({
     origin: config.ALLOWED_ORIGINS || "*",
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
