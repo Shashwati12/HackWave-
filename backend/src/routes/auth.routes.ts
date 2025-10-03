@@ -2,7 +2,7 @@ import { Router } from "express";
 import type { Response, Request, NextFunction} from "express";
 import { register, login, getProfile, getUserIdByEmail, updateProfile } from "../controllers/auth.controllers";
 import type { Multer } from "multer";
-import { validate } from "uuid";
+import { validate } from "../middleware/validate";
 import { userSchema } from "../validations/auth.validation";
 
 

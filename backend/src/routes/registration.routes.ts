@@ -3,7 +3,7 @@ import type { Response, Request, NextFunction} from "express";
 import { registerForEvent, getUserRegistrations, getTeamsByEvent, checkUserEventRegistration} from "../controllers/registration.controllers";
 
 import type { Multer } from "multer";
-import { validate } from "uuid";
+import { validate } from "../middleware/validate";
 import { teamSchema } from "../validations/registration.validation";
 
 export default function registrationRouter() {

@@ -1,6 +1,6 @@
 import asyncHandler from 'express-async-handler';
-import * as registrationService from '../services/registration.service.ts';
-import { ApiError } from '../utils/appError.ts';
+import * as registrationService from '../services/registration.service';
+import { ApiError } from '../utils/appError';
 import type { Request, Response } from 'express';
 
 export const registerForEvent = asyncHandler(async (req:Request, res:Response) => {
