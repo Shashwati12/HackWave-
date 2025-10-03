@@ -35,6 +35,14 @@ export const getEventById = async (id: string): Promise<Event> => {
   return data as Event;
 };
 
+// export const getHostedEvent = async ( userId : string) : Promise<Event[]> =>{
+//   const { data , error } = await supabase
+//   .from('event')
+//   .select('*'
+//   .
+//   )
+// }
+
 export const getCurrentUserEvents = async (userId: string): Promise<Event[]> => {
   const { data, error } = await supabase
     .from('events')
