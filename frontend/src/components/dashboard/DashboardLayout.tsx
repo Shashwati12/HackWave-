@@ -10,7 +10,7 @@ import { cn } from "../../lib/utils";
 // Role-based dashboard components
 import UserDashboard from "../../pages/StudentDashboard";
 import HostDashboard from "../../pages/HostDashboard";
-import VenderDashboard from "../../pages/VenderDashboard";
+import VenderDashboard from "../../pages/VendorDashboard";
 import SponserDashboard from "../../pages/SponserDashboard";
 import AdminDashboard from "../../pages/AdminDashboard";
 
@@ -82,7 +82,7 @@ const DashboardLayout = () => {
       </Sidebar>
 
       {/* Main content area */}
-      <div className={`flex-1 ${isProfilePage ? "" : "pt-14"} p-4 md:p-10`}>
+      <div className={`flex-1 ${isProfilePage ? "" : "pt-14"} p-4 md:p-10 overflow-y-auto`}>
         {RoleDashboard ? <RoleDashboard /> : <div>No user dashboard available</div>}
         <Outlet />
       </div>

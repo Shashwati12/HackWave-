@@ -1,7 +1,5 @@
 import { useState } from "react";
 import { Eye, EyeOff, LogIn } from "lucide-react";
-import { FcGoogle } from "react-icons/fc";
-import { FaTwitter } from "react-icons/fa";
 import { MdEvent } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
