@@ -51,6 +51,14 @@ export const getEventsForCurrentUser = asyncHandler(async (req: Request, res: Re
   res.json(events);
 });
 
+export const getHostedEvent = asyncHandler( async ( req : Request , res : Response) => {
+
+  if(!req.user?.id) throw new ApiError('User not found' , 401);
+
+  const HostedEvent : Event[] = await eventService.getHostedEvent(req.user.id);
+  res.json(HostedEvent);
+})
+
 export const updateEvent = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user?.id) throw new ApiError('User not authenticated', 401);
 
