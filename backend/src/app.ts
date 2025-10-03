@@ -5,7 +5,6 @@ import { json, urlencoded } from "body-parser";
 import routes from "./routes";
 import { errorHandler } from "./utils/appError";
 import config from "./config";
-import path from "path";
 
 // Initialize Supabase client for storage operations
 import supabase from "./config/supabase.config";

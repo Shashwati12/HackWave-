@@ -1,20 +1,18 @@
 import supabase from '../config/supabase.config.js';
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import {
+import type {
   RegisterData,
   UserProfile,
   UserBasic,
   UpdateProfileData,
 } from '../types/auth.types.ts';
 
+import config from '../config/index.ts';
 
 const generateToken = (id: string): string => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) {
-    throw new Error('JWT_SECRET is not defined in environment variables');
-  }
-  return jwt.sign({ id }, secret);
+  
+  
+  return jwt.sign({ id }, config.JWT_SECRET());
 };
 
 export const register = async (userData: RegisterData): Promise<UserProfile> => {
@@ -36,9 +34,9 @@ export const register = async (userData: RegisterData): Promise<UserProfile> => 
         email: userData.email,
         name: userData.name,
         gender: userData.gender,
-        stream: userData.stream,
+        role: userData.role,
         date_of_birth: userData.date_of_birth,
-        passing_out_year: userData.passing_out_year,
+       
       },
     ])
     .select()
@@ -106,8 +104,6 @@ export const updateProfile = async (
   userId: string,
   updateData: UpdateProfileData
 ): Promise<UserProfile> => {
-  console.log('-------------service working--------');
-  console.log(updateData);
 
   const { data, error } = await supabase
     .from('users')
@@ -124,6 +120,5 @@ export const updateProfile = async (
     .single();
 
   if (error) throw error;
-  console.log(data);
   return data as UserProfile;
 };
