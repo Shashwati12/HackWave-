@@ -27,13 +27,13 @@ model Event {
   participation_type    String?
   max_team_size         Int?
   department            String?
-  category              String?
   registration_fee      Decimal?
   created_at            DateTime  @default(now())
   updated_at            DateTime  @updatedAt
   image_url             String?
   rules                 String?
   organizer             String?
+  layer                 String
   max_participants      Int?
   eligibility           String?
 
@@ -75,10 +75,14 @@ model User {
   name          String
   email         String    @unique
   gender        String?
-  role          String?
+  role          Roles     @default(User)
   date_of_birth DateTime?
+  image_url     String
+
   created_at    DateTime  @default(now())
 
+  vendor         Vendor?
+  sponsor        Sponsor?
   teams_led         Team[]
   team_members      TeamMember[]
   discussions       Discussion[]
@@ -100,13 +104,12 @@ model Discussion {
 
 model Vendor {
   id           Int      @id @default(autoincrement())
+  userId       Int       @unique
   service_type String?
-  name         String
-  contact_info String?
   fees         Decimal? @db.Decimal(10, 2)
-  image_url    String?
   created_at   DateTime @default(now())
 
+  user          User    @relation(fields: [userId], references: [id])
   event_vendors     EventVendor[]
   chat_participants ChatParticipant[]
   chat_messages     ChatMessage[]
@@ -128,13 +131,12 @@ model EventVendor {
 
 model Sponsor {
   id             Int      @id @default(autoincrement())
-  name           String
-  contact_info   String?
+  userId         Int      @unique
   pledged_amount Decimal? @db.Decimal(12, 2)
-  image_url      String?
   created_at     DateTime @default(now())
   ratings        Int?
 
+  user          User    @relation(fields: [userId], references: [id])
   event_sponsors    EventSponsor[]
   chat_participants ChatParticipant[]
   chat_messages     ChatMessage[]
@@ -160,16 +162,30 @@ model Request {
   layer      String?
 }
 
-model ChatRoom {
-  id         Int      @id @default(autoincrement())
-  name       String?
-  event_id   Int?
-  type       String // 'group' | 'direct'
-  created_at DateTime @default(now())
+ model ChatRoom {
+  id         Int               @id @default(autoincrement())
+  name       String?           // Name is for groups, null for DMs
+  event_id   Int
+  structure  ChatRoomStructure // Is it a GROUP or DIRECT chat?
+  groupType  Roles?    // Optional: Only used if structure is GROUP
+  created_at DateTime          @default(now())
 
-  event        Event?            @relation(fields: [event_id], references: [id])
+  event        Event             @relation(fields: [event_id], references: [id])
   participants ChatParticipant[]
   messages     ChatMessage[]
+}
+
+ // Describes the basic structure of the chat
+enum ChatRoomStructure {
+  GROUP
+  DIRECT
+}
+
+enum Roles {
+  Host
+  Vender
+  Sponser
+  User
 }
 
 model ChatParticipant {
