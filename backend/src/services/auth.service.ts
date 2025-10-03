@@ -1,0 +1,129 @@
+import supabase from '../config/supabase.config.js';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import {
+  RegisterData,
+  UserProfile,
+  UserBasic,
+  UpdateProfileData,
+} from '../types/auth.types.ts';
+
+
+const generateToken = (id: string): string => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET is not defined in environment variables');
+  }
+  return jwt.sign({ id }, secret);
+};
+
+export const register = async (userData: RegisterData): Promise<UserProfile> => {
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email: userData.email,
+    password: userData.password,
+  });
+
+  if (authError) throw new Error(authError.message);
+  if (!authData?.user) throw new Error('User not created');
+
+  const userId = authData.user.id;
+
+  const { data: user, error } = await supabase
+    .from('users')
+    .insert([
+      {
+        id: userId,
+        email: userData.email,
+        name: userData.name,
+        gender: userData.gender,
+        stream: userData.stream,
+        date_of_birth: userData.date_of_birth,
+        passing_out_year: userData.passing_out_year,
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return {
+    ...user,
+    token: generateToken(user.id),
+  } as UserProfile;
+};
+
+export const login = async (email: string, password: string): Promise<UserProfile> => {
+  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (authError || !authData?.user) {
+    throw new Error('Invalid credentials');
+  }
+
+  const userId = authData.user.id;
+
+  const { data: userProfile, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (error || !userProfile) {
+    throw new Error('User profile not found');
+  }
+
+  return {
+    ...userProfile,
+    token: generateToken(userId),
+  } as UserProfile;
+};
+
+export const getUserIdByEmail = async (email: string): Promise<UserBasic> => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, email')
+    .eq('email', email)
+    .single();
+
+  if (error) throw error;
+  return data as UserBasic;
+};
+
+export const getProfile = async (userId: string): Promise<UserProfile> => {
+  const { data, error } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (error) throw error;
+  return data as UserProfile;
+};
+
+export const updateProfile = async (
+  userId: string,
+  updateData: UpdateProfileData
+): Promise<UserProfile> => {
+  console.log('-------------service working--------');
+  console.log(updateData);
+
+  const { data, error } = await supabase
+    .from('users')
+    .update({
+      email: updateData.email,
+      name: updateData.name,
+      gender: updateData.gender,
+      stream: updateData.stream,
+      date_of_birth: updateData.date_of_birth,
+      passing_out_year: updateData.passing_out_year,
+    })
+    .eq('id', userId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  console.log(data);
+  return data as UserProfile;
+};
