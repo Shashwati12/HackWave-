@@ -1,16 +1,26 @@
+import { prisma } from '../config/prisma.config';
 import supabase from '../config/supabase.config';
 import type { Event, EventFilters, EventData } from '../types/event.types';
 
-export const createEvent = async (eventData: EventData, userId: string): Promise<Event> => {
-  const { data, error } = await supabase
-    .from('events')
-    .insert([{ ...eventData, event_creator_id: userId }])
-    .select()
-    .single();
+// export const createEvent = async (eventData: EventData, userId: string) => {
+//   const { data, error } = await supabase
+//     .from('events')
+//     .insert([{ ...eventData, event_creator_id: userId }])
+//     .select()
+//     .single();
 
-  if (error) throw error;
-  return data as Event;
-};
+//   if (error) throw error;
+//   return data as Event;
+// };
+
+export const createEvent = async (eventData : EventData , userId : number) => {
+    return await prisma.event.create({
+        data : {
+            ...eventData,
+            event_creator_id : userId
+        },
+    })
+}
 
 export const getEvents = async (filters: EventFilters = {}): Promise<Event[]> => {
   let query = supabase.from('events').select('*');
@@ -24,7 +34,7 @@ export const getEvents = async (filters: EventFilters = {}): Promise<Event[]> =>
   return data as Event[];
 };
 
-export const getEventById = async (id: string): Promise<Event> => {
+export const getEventById = async (id: number): Promise<Event> => {
   const { data, error } = await supabase
     .from('events')
     .select('*')
@@ -35,15 +45,14 @@ export const getEventById = async (id: string): Promise<Event> => {
   return data as Event;
 };
 
-// export const getHostedEvent = async ( userId : string) : Promise<Event[]> =>{
-//   const { data , error } = await supabase
-//   .from('event')
-//   .select('*'
-//   .
-//   )
-// }
+export const getHostedEvent = async ( userId : number) : Promise<Event[]> =>{
+  const { data , error } = await supabase
+  .from('event')
+  .select('*')
+  
+}
 
-export const getCurrentUserEvents = async (userId: string): Promise<Event[]> => {
+export const getCurrentUserEvents = async (userId: number): Promise<Event[]> => {
   const { data, error } = await supabase
     .from('events')
     .select('*')
@@ -53,7 +62,7 @@ export const getCurrentUserEvents = async (userId: string): Promise<Event[]> => 
   return data as Event[];
 };
 
-export const updateEvent = async (id: string, eventData: Partial<EventData>, userId: string): Promise<Event> => {
+export const updateEvent = async (id: number, eventData: Partial<EventData>, userId: number): Promise<Event> => {
   const { data, error } = await supabase
     .from('events')
     .update(eventData)
@@ -66,7 +75,7 @@ export const updateEvent = async (id: string, eventData: Partial<EventData>, use
   return data as Event;
 };
 
-export const deleteEvent = async (id: string, userId: string): Promise<{ success: boolean }> => {
+export const deleteEvent = async (id: number, userId: number) => {
   const { error } = await supabase
     .from('events')
     .delete()
@@ -77,7 +86,7 @@ export const deleteEvent = async (id: string, userId: string): Promise<{ success
   return { success: true };
 };
 
-export const getEventParticipationCount = async (eventId: string): Promise<number> => {
+export const getEventParticipationCount = async (eventId: number) => {
   const { count, error } = await supabase
     .from('team_members')
     .select('*', { head: true, count: 'exact' })

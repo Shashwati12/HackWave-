@@ -11,7 +11,9 @@ const getString = (value: any): string | undefined => {
 };
 
 export const createEvent = asyncHandler(async (req: Request, res: Response) => {
+
   if (!req.user?.id) throw new ApiError('User not authenticated', 401);
+  const userId = parseInt(req.user.id);
 
   let imageUrl: string | undefined;
   if (req.file) {
@@ -19,25 +21,24 @@ export const createEvent = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const eventData: EventData = { ...req.body, image_url: imageUrl };
-  const event: Event = await eventService.createEvent(eventData, req.user.id);
+  const event = await eventService.createEvent(eventData, userId);
 
   res.status(201).json(event);
 });
 
 export const getEvents = asyncHandler(async (req: Request, res: Response) => {
-  const filters: EventFilters = {
-    type: getString(req.query.type),
-    department: getString(req.query.department),
-    category: getString(req.query.category),
-  };
 
-  const events: Event[] = await eventService.getEvents(filters);
-  res.json(events);
+        const event = await eventService.getEvents();
+        res.status(200).json(event);
+
 });
 
+
 export const getEventById = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  if (!id) throw new ApiError('Event ID is required', 400);
+
+  if (!req.params?.id) throw new ApiError('Event ID is required', 400);
+
+  const id  = parseInt(req.params.id);
 
   const event: Event = await eventService.getEventById(id);
   res.json(event);
@@ -46,29 +47,32 @@ export const getEventById = asyncHandler(async (req: Request, res: Response) => 
 
 export const getEventsForCurrentUser = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user?.id) throw new ApiError('User not authenticated', 401);
+  const id = parseInt(req.user.id)
 
-  const events: Event[] = await eventService.getCurrentUserEvents(req.user.id);
+  const events: Event[] = await eventService.getCurrentUserEvents(id);
   res.json(events);
 });
 
 export const getHostedEvent = asyncHandler( async ( req : Request , res : Response) => {
 
   if(!req.user?.id) throw new ApiError('User not found' , 401);
+  const id = parseInt( req.user.id);
 
-  const HostedEvent : Event[] = await eventService.getHostedEvent(req.user.id);
+  const HostedEvent : Event[] = await eventService.getHostedEvent(id);
   res.json(HostedEvent);
 })
 
 export const updateEvent = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user?.id) throw new ApiError('User not authenticated', 401);
+  const id = parseInt(req.user.id);
+  if (!req.params.id) throw new ApiError('Event ID is required', 400);
 
-  const { id } = req.params;
-  if (!id) throw new ApiError('Event ID is required', 400);
+  const eventId = parseInt(req.params.id);
 
   let imageUrl: string | undefined;
   if (req.file) {
     
-    const existingEvent: Event = await eventService.getEventById(id);
+    const existingEvent: Event = await eventService.getEventById(eventId);
     if (existingEvent.image_url) {
 
       imageUrl = await uploadImage(supabase, req.file, 'events', existingEvent.image_url);
@@ -78,32 +82,35 @@ export const updateEvent = asyncHandler(async (req: Request, res: Response) => {
     req.body.image_url = imageUrl;
   }
 
-  const event: Event = await eventService.updateEvent(id, req.body, req.user.id);
+  const event: Event = await eventService.updateEvent(eventId, req.body, id);
   res.json(event);
 });
 
 
 export const deleteEvent = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user?.id) throw new ApiError('User not authenticated', 401);
+  const userId = parseInt(req.user.id);
 
-  const { id } = req.params;
-  if (!id) throw new ApiError('Event ID is required', 400);
+  if (!req.params.eventId) throw new ApiError('Event ID is required', 400);
+  const eventId = parseInt(req.params.eventId);
 
-  const existingEvent: Event = await eventService.getEventById(id);
+  const existingEvent: Event = await eventService.getEventById(eventId);
 
   if (existingEvent.image_url) {
     await deleteImage(supabase, existingEvent.image_url);
   }
 
-  await eventService.deleteEvent(id, req.user.id);
+  await eventService.deleteEvent(userId, eventId);
   res.json({ message: 'Event and associated image deleted successfully' });
 });
 
 
 export const getEventParticipationCount = asyncHandler(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  if (!id) throw new ApiError('Event ID is required', 400);
+ 
+  if (!req.params.eventId) throw new ApiError('Event ID is required', 400);
 
-  const count: number = await eventService.getEventParticipationCount(id);
+  const eventId = parseInt(req.params.eventId);
+
+  const count: number = await eventService.getEventParticipationCount(eventId);
   res.status(200).json({ count });
 });

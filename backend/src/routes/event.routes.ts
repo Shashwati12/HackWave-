@@ -24,10 +24,10 @@ export default function eventRouter(upload: Multer, supabase : SupabaseClient) {
     router.post("/",upload.single('image'), parseEventData, validate(eventSchema), createEvent);
     router.get("/myEvents", getEventsForCurrentUser);
     router.get("/hostEvent" , getHostedEvent)
-    router.get("/:id", getEventById);
-    router.put("/:id", validate(eventSchema), updateEvent);
-    router.delete("/:id", deleteEvent);
-    router.get("/:id/participant", getEventParticipationCount);
+    router.get("/:eventId", getEventById);
+    router.put("/:eventId", validate(eventSchema), updateEvent);
+    router.delete("/:eventId", deleteEvent);
+    router.get("/:eventId/participant", getEventParticipationCount);
 
   return router;
 }
