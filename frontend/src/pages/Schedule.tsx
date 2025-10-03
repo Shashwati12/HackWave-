@@ -1,3 +1,265 @@
+"use client";
+
+import { useState } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  Clock,
+  MapPin,
+  Users,
+  Ticket,
+  Sparkles,
+  TrendingUp,
+} from "lucide-react";
+import { Background } from "../components/ShootingStar";
+
+// Event Data
+const eventsData = {
+  "2025-10-05": [
+    {
+      id: 1,
+      title: "Design Conference 2025",
+      time: "09:00 AM - 05:00 PM",
+      location: "Convention Center",
+      attendees: 1247,
+      tickets: "892 sold",
+      status: "Published",
+      color: "from-[#36C1F6] to-[#657FFF]",
+      iconBg: "bg-[#36C1F6]/20",
+      iconColor: "text-[#36C1F6]",
+    },
+  ],
+  "2025-10-08": [
+    {
+      id: 2,
+      title: "Tech Summit",
+      time: "10:00 AM - 04:00 PM",
+      location: "Tech Hub",
+      attendees: 450,
+      tickets: "380 sold",
+      status: "Published",
+      color: "from-[#657FFF] to-[#36C1F6]",
+      iconBg: "bg-[#657FFF]/20",
+      iconColor: "text-[#657FFF]",
+    },
+  ],
+  "2025-10-12": [
+    {
+      id: 3,
+      title: "Workshop Series",
+      time: "02:00 PM - 06:00 PM",
+      location: "Innovation Lab",
+      attendees: 120,
+      tickets: "98 sold",
+      status: "Published",
+      color: "from-[#16D3AC] to-[#36C1F6]",
+      iconBg: "bg-[#16D3AC]/20",
+      iconColor: "text-[#16D3AC]",
+    },
+    {
+      id: 4,
+      title: "Networking Mixer",
+      time: "07:00 PM - 10:00 PM",
+      location: "Rooftop Lounge",
+      attendees: 85,
+      tickets: "72 sold",
+      status: "Published",
+      color: "from-[#657FFF] to-[#16D3AC]",
+      iconBg: "bg-[#657FFF]/20",
+      iconColor: "text-[#657FFF]",
+    },
+  ],
+  "2025-10-15": [
+    {
+      id: 5,
+      title: "Product Launch Event",
+      time: "11:00 AM - 03:00 PM",
+      location: "Grand Ballroom",
+      attendees: 680,
+      tickets: "545 sold",
+      status: "Published",
+      color: "from-[#36C1F6] to-[#16D3AC]",
+      iconBg: "bg-[#36C1F6]/20",
+      iconColor: "text-[#36C1F6]",
+    },
+  ],
+  "2025-10-20": [
+    {
+      id: 6,
+      title: "Music Festival",
+      time: "12:00 PM - 11:00 PM",
+      location: "City Park",
+      attendees: 2500,
+      tickets: "2100 sold",
+      status: "Selling Fast",
+      color: "from-[#16D3AC] to-[#657FFF]",
+      iconBg: "bg-[#16D3AC]/20",
+      iconColor: "text-[#16D3AC]",
+    },
+  ],
+};
+
+export default function Schedule() {
+  const [currentDate, setCurrentDate] = useState(new Date(2025, 9, 1));
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const daysInMonth = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+
+  const firstDayOfMonth = (date: Date) =>
+    new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+
+  const previousMonth = () => {
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+    );
+    setSelectedDate(null);
+  };
+
+  const nextMonth = () => {
+    setCurrentDate(
+      new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+    );
+    setSelectedDate(null);
+  };
+
+  const formatDateKey = (year: number, month: number, day: number) =>
+    `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(
+      2,
+      "0"
+    )}`;
+
+  const hasEvents = (day: number) => {
+    const dateKey = formatDateKey(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      day
+    );
+    return eventsData[dateKey] && eventsData[dateKey].length > 0;
+  };
+
+  const getEventCount = (day: number) => {
+    const dateKey = formatDateKey(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      day
+    );
+    return eventsData[dateKey] ? eventsData[dateKey].length : 0;
+  };
+
+  const handleDateClick = (day: number) => {
+    const dateKey = formatDateKey(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      day
+    );
+    setSelectedDate(dateKey);
+  };
+
+  const renderCalendar = () => {
+    const days = daysInMonth(currentDate);
+    const firstDay = firstDayOfMonth(currentDate);
+    const cells: JSX.Element[] = [];
+    const today = new Date();
+    const isCurrentMonth =
+      today.getMonth() === currentDate.getMonth() &&
+      today.getFullYear() === currentDate.getFullYear();
+
+    for (let i = 0; i < firstDay; i++) {
+      cells.push(<div key={`empty-${i}`} className="p-4" />);
+    }
+
+    for (let day = 1; day <= days; day++) {
+      const dateKey = formatDateKey(
+        currentDate.getFullYear(),
+        currentDate.getMonth(),
+        day
+      );
+      const isSelected = selectedDate === dateKey;
+      const hasEvent = hasEvents(day);
+      const eventCount = getEventCount(day);
+      const isToday = isCurrentMonth && today.getDate() === day;
+
+      cells.push(
+        <button
+          key={day}
+          onClick={() => handleDateClick(day)}
+          className={`relative p-4 rounded-xl transition-all duration-300 group ${
+            isSelected
+              ? "bg-gradient-to-br from-[#36C1F6] to-[#657FFF] text-white shadow-lg shadow-[#36C1F6]/30 scale-105"
+              : isToday
+              ? "bg-white/10 text-white ring-2 ring-[#16D3AC]"
+              : hasEvent
+              ? "bg-white/5 hover:bg-white/10 text-white hover:scale-105 hover:shadow-lg"
+              : "text-[#B0B3C0] hover:bg-white/5 hover:text-white"
+          }`}
+        >
+          <span
+            className={`text-lg font-semibold block mb-1 ${
+              isSelected ? "text-white" : ""
+            }`}
+          >
+            {day}
+          </span>
+
+          {hasEvent && (
+            <div className="flex items-center justify-center gap-1">
+              {eventCount === 1 ? (
+                <div
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    isSelected ? "bg-white" : "bg-[#16D3AC]"
+                  } group-hover:scale-125 transition-transform`}
+                />
+              ) : (
+                <div className="flex gap-0.5">
+                  {[...Array(Math.min(eventCount, 3))].map((_, i) => (
+                    <div
+                      key={i}
+                      className={`w-1 h-1 rounded-full ${
+                        isSelected ? "bg-white" : "bg-[#16D3AC]"
+                      } group-hover:scale-125 transition-transform`}
+                      style={{ transitionDelay: `${i * 50}ms` }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {isSelected && (
+            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent pointer-events-none" />
+          )}
+        </button>
+      );
+    }
+
+    return cells;
+  };
+
+  const selectedEvents = selectedDate ? eventsData[selectedDate] : null;
+  const totalEventsThisMonth = Object.keys(eventsData).filter((date) => {
+    const d = new Date(date);
+    return (
+      d.getMonth() === currentDate.getMonth() &&
+      d.getFullYear() === currentDate.getFullYear()
+    );
+  }).length;
 
   return (
     <div className="min-h-screen bg-black relative overflow-x-hidden overflow-y-auto">

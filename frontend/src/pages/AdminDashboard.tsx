@@ -1,6 +1,6 @@
 "use client";
 import { SidebarDemo } from "../components/dashboard/Sidebar";
-import { IconUsers, IconBuildingStore, IconStar, IconUserPlus, IconPlus } from "@tabler/icons-react";
+import { IconUsers, IconBuildingStore, IconStar, IconUserPlus, IconPlus, IconUser } from "@tabler/icons-react";
 
 const AdminDashboard = () => {
   const SiderbarMenu = [
