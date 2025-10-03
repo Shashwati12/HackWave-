@@ -31,12 +31,12 @@ export const getUserIdByEmail = asyncHandler(async (req: Request, res: Response)
 });
 
 export const getProfile = asyncHandler(async (req: Request, res: Response) => {
-  if (!req.user?.id) {
+  if (!req.userId) {
     res.status(401).json({ message: 'Unauthorized' });
     return;
   }
 
-  const profile = await authService.getProfile(req.user.id);
+  const profile = await authService.getProfile(req.userId);
   if (!profile) {
     res.status(404).json({ message: 'Profile not found.' });
     return;
@@ -46,12 +46,11 @@ export const getProfile = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
-  if (!req.user?.id) {
+  if (!req.userId) {
     res.status(401).json({ message: 'Unauthorized' });
     return;
   }
 
-  const updatedUser = await authService.updateProfile(req.user.id, req.body as UpdateProfileData);
-  console.log(req.body);
+  const updatedUser = await authService.updateProfile(req.userId, req.body as UpdateProfileData);
   res.status(200).json(updatedUser);
 });

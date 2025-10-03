@@ -121,6 +121,27 @@ export const getTeamsByEvent = asyncHandler(async (req: Request, res: Response) 
   });
 });
 
+export const checkUserEventRegistration = asyncHandler(async (req: Request, res: Response) => {
+  const { userId, eventId } = req.params;
+
+  if (!userId || !eventId) {
+    throw new ApiError("User ID and Event ID are required", 400);
+  }
+
+  const userIdNum = Number(userId);
+  const eventIdNum = Number(eventId);
+
+  if (isNaN(userIdNum) || isNaN(eventIdNum)) {
+    throw new ApiError("Invalid User ID or Event ID", 400);
+  }
+
+  const isRegistered = await registrationService.checkUserEventRegistration(userIdNum, eventIdNum);
+
+  res.status(200).json({
+    success: true,
+    isRegistered,
+  });
+});
 
 
 
