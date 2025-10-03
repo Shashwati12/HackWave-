@@ -22,44 +22,36 @@ export const createEvent = async (eventData : EventData , userId : number) => {
     })
 }
 
-export const getEvents = async (filters: EventFilters = {}): Promise<Event[]> => {
-  let query = supabase.from('events').select('*');
-
-  if (filters.type) query = query.eq('event_type', filters.type);
-  if (filters.department) query = query.eq('department', filters.department);
-  if (filters.category) query = query.eq('category', filters.category);
-
-  const { data, error } = await query;
-  if (error) throw error;
-  return data as Event[];
+export const getEvents = async (filters: EventFilters = {})=> {
+    return await prisma.event.findMany({})
 };
 
-export const getEventById = async (id: number): Promise<Event> => {
-  const { data, error } = await supabase
-    .from('events')
-    .select('*')
-    .eq('id', id)
-    .single();
-
-  if (error) throw error;
-  return data as Event;
+export const getEventById = async (id: number) => {
+    
+  return await prisma.event.findUnique({
+    where :{
+      id : id
+    }
+  })
 };
 
-export const getHostedEvent = async ( userId : number) : Promise<Event[]> =>{
-  const { data , error } = await supabase
-  .from('event')
-  .select('*')
+export const getHostedEvent = async ( userId : number) =>{
+  
+  return await prisma.event.findMany({
+    where : {
+      event_creator_id : userId
+    }
+  })
   
 }
 
-export const getCurrentUserEvents = async (userId: number): Promise<Event[]> => {
-  const { data, error } = await supabase
-    .from('events')
-    .select('*')
-    .eq('event_creator_id', userId);
+export const getCurrentUserEvents = async (userId: number) => {
 
-  if (error) throw error; 
-  return data as Event[];
+  return await prisma.event.findMany({
+    where : {
+        
+    }
+  })
 };
 
 export const updateEvent = async (id: number, eventData: Partial<EventData>, userId: number): Promise<Event> => {

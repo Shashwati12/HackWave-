@@ -40,7 +40,7 @@ export const getEventById = asyncHandler(async (req: Request, res: Response) => 
 
   const id  = parseInt(req.params.id);
 
-  const event: Event = await eventService.getEventById(id);
+  const event = await eventService.getEventById(id);
   res.json(event);
 });
 
