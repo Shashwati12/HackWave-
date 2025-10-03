@@ -14,6 +14,11 @@ export function FloatingNavbar() {
       link: "/about",
       icon: <IconUser className="h-4 w-6 text-neutral-500 dark:text-white" />,
     },
+     {
+      name: "Event",
+      link: "/events",
+      icon: <IconUser className="h-4 w-6 text-neutral-500 dark:text-white" />,
+    },
     {
       name: "Contact",
       link: "/contact",

@@ -13,7 +13,7 @@ export const Home = () => {
 
         <div className="absolute inset-0 bg-black/40 z-10" />
 
-        <FloatingNavbar />
+       
 
         <div className="relative z-20 max-w-[1400px] mx-auto px-8 pt-40 pb-32">
           
