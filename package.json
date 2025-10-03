@@ -13,11 +13,15 @@
   "peerDependencies": {
     "typescript": "^5"
   },
-   "scripts": {
+  "scripts": {
     "dev": "concurrently \"bun run backend-dev\" \"bun run frontend-dev\"",
     "backend-dev": "cd backend && bun run dev",
     "frontend-dev": "cd frontend && bun run dev",
     "install-f": "cd frontend && bun install",
     "install-b": "cd backend && bun install"
+  },
+  "dependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "bcrypt": "^6.0.0"
   }
 }

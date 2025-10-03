@@ -6,118 +6,107 @@ import type {
   UserBasic,
   UpdateProfileData,
 } from '../types/auth.types.ts';
-
+import bcrypt from 'bcrypt'
+import {prisma} from '../config/prisma.config.ts';
 import config from '../config/index.ts';
+import { password } from 'bun';
+import { ApiError } from '../utils/appError.ts';
+import type { User } from '../generated/prisma/index';
 
-const generateToken = (id: string): string => {
-  
-  
+const generateToken = (id: number): string => {
   return jwt.sign({ id }, config.JWT_SECRET());
 };
 
-export const register = async (userData: RegisterData) => {
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: userData.email,
-    password: userData.password,
-  });
+export const register = async (userData: RegisterData): Promise<> => {
 
-  if (authError) throw new Error(authError.message);
-  if (!authData?.user) throw new Error('User not created');
-
-  const userId = authData.user.id;
-
-  const { data: user, error } = await supabase
-    .from('users')
-    .insert([
-      {
-        id: userId,
-        email: userData.email,
+  const hashedPassword = await bcrypt.hash(userData.password, 10);
+    const user = await prisma.user.create({
+      data: {
         name: userData.name,
+        email: userData.email,
         gender: userData.gender,
         role: userData.role,
-        date_of_birth: userData.date_of_birth,
-       
-      },
-    ])
-    .select()
-    .single();
-
-  if (error) throw error;
-
+        date_of_birth: new Date(userData.date_of_birth),
+        password: hashedPassword
+      }
+    });
   return {
-    ...user,
-    token: generateToken(user.id),
-  } as UserProfile;
-};
+    user: user,
+  }
+}
 
 export const login = async (email: string, password: string): Promise<UserProfile> => {
-  const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+
+  try {
+  const user = await prisma.user.findUnique({
+    where: { email },
   });
 
-  if (authError || !authData?.user) {
+  if (!user) {
+    throw new ApiError('Invalid credentials');
+  }
+  // Compare password
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
     throw new Error('Invalid credentials');
   }
-
-  const userId = authData.user.id;
-
-  const { data: userProfile, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', userId)
-    .single();
-
-  if (error || !userProfile) {
-    throw new Error('User profile not found');
-  }
-
-  return {
-    ...userProfile,
-    token: generateToken(userId),
-  } as UserProfile;
+   return {
+    ...user,
+    token: generateToken(user.id),
+  };
+}catch(e) {
+  console.log(e);
+}
 };
 
 export const getUserIdByEmail = async (email: string): Promise<UserBasic> => {
-  const { data, error } = await supabase
-    .from('users')
-    .select('id, email')
-    .eq('email', email)
-    .single();
-
-  if (error) throw error;
-  return data as UserBasic;
+  return await prisma.user.findFirst({
+    where: {
+      email
+    },
+  })
 };
 
-export const getProfile = async (userId: string): Promise<UserProfile> => {
-  const { data, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('id', userId)
-    .single();
-
-  if (error) throw error;
-  return data as UserProfile;
+export const getProfile = async (userId: number): Promise<UserProfile> => {
+  return await prisma.user.findFirst({
+    where: {
+      id: userId
+    },
+  })
 };
 
 export const updateProfile = async (
-  userId: string,
-  updateData: UpdateProfileData
-): Promise<UserProfile> => {
+  userId: number,
+  payload: UpdateProfileData
+): any => {
 
-  const { data, error } = await supabase
-    .from('users')
-    .update({
-      email: updateData.email,
-      name: updateData.name,
-      gender: updateData.gender,
-      stream: updateData.role,
-      date_of_birth: updateData.date_of_birth,
-    })
-    .eq('id', userId)
-    .select()
-    .single();
+  try {
+  const { name, ...rest } = payload;
 
-  if (error) throw error;
-  return data as UserProfile;
+  const dataToUpdate = Object.fromEntries(
+    Object.entries({ name, ...rest }).filter(([_, v]) => v !== undefined)
+  );
+
+  if (JSON.stringify(dataToUpdate) === "{}") throw new ApiError("No fields passed", 400);
+
+  if(dataToUpdate.password) {
+    const hashedPassword = await bcrypt.hash(dataToUpdate.password, 10);
+    dataToUpdate.password = hashedPassword;
+  }
+  if(dataToUpdate.date_of_birth) {
+    dataToUpdate.date_of_birth = new Date(dataToUpdate.date_of_birth);
+  }
+  const update =  await prisma.user.update({
+    where: { id: userId },
+    data: dataToUpdate,
+  });
+
+  return prisma.user.findFirst({
+    where: {
+      id: userId
+    }
+  })
+}catch(e) {
+  console.log(e);
+}
 };
