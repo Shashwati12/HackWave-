@@ -15,7 +15,7 @@ const generateToken = (id: string): string => {
   return jwt.sign({ id }, config.JWT_SECRET());
 };
 
-export const register = async (userData: RegisterData): Promise<UserProfile> => {
+export const register = async (userData: RegisterData) => {
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email: userData.email,
     password: userData.password,

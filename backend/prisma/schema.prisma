@@ -33,7 +33,7 @@ model Event {
   image_url             String?
   rules                 String?
   organizer             String?
-  layer                 String
+  layer                 String?
   max_participants      Int?
   eligibility           String?
 
@@ -184,7 +184,7 @@ enum ChatRoomStructure {
 
 enum Roles {
   Host
-  Vender
+  Vendor
   Sponser
   User
 }

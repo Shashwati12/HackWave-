@@ -1,17 +1,26 @@
+import { prisma } from '../config/prisma.config';
 import supabase from '../config/supabase.config';
 import type { Event, EventFilters, EventData } from '../types/event.types';
 
-export const createEvent = async (eventData: EventData, userId: string): Promise<Event> => {
-  const { data, error } = await supabase
-    .from('events')
-    .insert([{ ...eventData, event_creator_id: userId }])
-    .select()
-    .single();
+// export const createEvent = async (eventData: EventData, userId: string) => {
+//   const { data, error } = await supabase
+//     .from('events')
+//     .insert([{ ...eventData, event_creator_id: userId }])
+//     .select()
+//     .single();
 
-  if (error) throw error;
-  return data as Event;
-};
+//   if (error) throw error;
+//   return data as Event;
+// };
 
+export const createEvent = async (eventData : EventData , userId : number) => {
+    return await prisma.event.create({
+        data : {
+            ...eventData,
+            event_creator_id : userId
+        },
+    })
+}
 export const getEvents = async (filters: EventFilters = {}): Promise<Event[]> => {
   let query = supabase.from('events').select('*');
 
@@ -35,13 +44,12 @@ export const getEventById = async (id: string): Promise<Event> => {
   return data as Event;
 };
 
-// export const getHostedEvent = async ( userId : string) : Promise<Event[]> =>{
-//   const { data , error } = await supabase
-//   .from('event')
-//   .select('*'
-//   .
-//   )
-// }
+export const getHostedEvent = async ( userId : string) : Promise<Event[]> =>{
+  const { data , error } = await supabase
+  .from('event')
+  .select('*')
+  
+}
 
 export const getCurrentUserEvents = async (userId: string): Promise<Event[]> => {
   const { data, error } = await supabase
