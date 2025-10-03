@@ -1,0 +1,245 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Event {
+  id                    Int       @id @default(autoincrement())
+  event_creator_id      Int
+  important_dates       DateTime?
+  registration_deadline DateTime?
+  prizes                String?
+  event_type            String?
+  venue                 String?
+  contact_info          String?
+  participation_type    String?
+  max_team_size         Int?
+  department            String?
+  category              String?
+  registration_fee      Decimal?
+  created_at            DateTime  @default(now())
+  updated_at            DateTime  @updatedAt
+  image_url             String?
+  rules                 String?
+  organizer             String?
+  max_participants      Int?
+  eligibility           String?
+
+  teams          Team[]
+  team_members   TeamMember[]
+  discussions    Discussion[]
+  event_vendors  EventVendor[]
+  event_sponsors EventSponsor[]
+  chat_rooms     ChatRoom[]
+  payments       Payment[]
+}
+
+model Team {
+  id         Int      @id @default(autoincrement())
+  event_id   Int
+  name       String
+  leader_id  Int
+  created_at DateTime @default(now())
+
+  event   Event        @relation(fields: [event_id], references: [id])
+  leader  User         @relation(fields: [leader_id], references: [id])
+  members TeamMember[]
+}
+
+model TeamMember {
+  team_id   Int
+  member_id Int
+  event_id  Int
+
+  team   Team  @relation(fields: [team_id], references: [id])
+  member User  @relation(fields: [member_id], references: [id])
+  event  Event @relation(fields: [event_id], references: [id])
+
+  @@id([team_id, member_id])
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  name          String
+  email         String    @unique
+  gender        String?
+  role          String?
+  date_of_birth DateTime?
+  created_at    DateTime  @default(now())
+
+  teams_led         Team[]
+  team_members      TeamMember[]
+  discussions       Discussion[]
+  chat_participants ChatParticipant[]
+  chat_messages     ChatMessage[]
+  payments          Payment[]
+}
+
+model Discussion {
+  id         Int      @id @default(autoincrement())
+  event_id   Int
+  user_id    Int
+  content    String
+  created_at DateTime @default(now())
+
+  event Event @relation(fields: [event_id], references: [id])
+  user  User  @relation(fields: [user_id], references: [id])
+}
+
+model Vendor {
+  id           Int      @id @default(autoincrement())
+  service_type String?
+  name         String
+  contact_info String?
+  fees         Decimal? @db.Decimal(10, 2)
+  image_url    String?
+  created_at   DateTime @default(now())
+
+  event_vendors     EventVendor[]
+  chat_participants ChatParticipant[]
+  chat_messages     ChatMessage[]
+  payments          Payment[]
+}
+
+model EventVendor {
+  id              Int      @id @default(autoincrement())
+  event_id        Int
+  vendor_id       Int
+  invested_amount Decimal? @db.Decimal(12, 2)
+  service_type    String?
+  earned_amount   Decimal? @db.Decimal(12, 2)
+  ratings         Int?
+
+  event  Event  @relation(fields: [event_id], references: [id])
+  vendor Vendor @relation(fields: [vendor_id], references: [id])
+}
+
+model Sponsor {
+  id             Int      @id @default(autoincrement())
+  name           String
+  contact_info   String?
+  pledged_amount Decimal? @db.Decimal(12, 2)
+  image_url      String?
+  created_at     DateTime @default(now())
+  ratings        Int?
+
+  event_sponsors    EventSponsor[]
+  chat_participants ChatParticipant[]
+  chat_messages     ChatMessage[]
+  payments          Payment[]
+}
+
+model EventSponsor {
+  id                  Int      @id @default(autoincrement())
+  event_id            Int
+  sponsor_id          Int
+  contribution_amount Decimal?
+  layer               String?
+
+  event   Event   @relation(fields: [event_id], references: [id])
+  sponsor Sponsor @relation(fields: [sponsor_id], references: [id])
+}
+
+model Request {
+  id         Int      @id @default(autoincrement())
+  senderId   Int
+  receiverId Int
+  amount     Decimal?
+  layer      String?
+}
+
+model ChatRoom {
+  id         Int      @id @default(autoincrement())
+  name       String?
+  event_id   Int?
+  type       String // 'group' | 'direct'
+  created_at DateTime @default(now())
+
+  event        Event?            @relation(fields: [event_id], references: [id])
+  participants ChatParticipant[]
+  messages     ChatMessage[]
+}
+
+model ChatParticipant {
+  id               Int      @id @default(autoincrement())
+  room_id          Int
+  participant_type String // 'user' | 'vendor' | 'sponsor'
+  participant_id   Int
+  role             String?
+  joined_at        DateTime @default(now())
+
+  room      ChatRoom @relation(fields: [room_id], references: [id])
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  Vendor    Vendor?  @relation(fields: [vendorId], references: [id])
+  vendorId  Int?
+  Sponsor   Sponsor? @relation(fields: [sponsorId], references: [id])
+  sponsorId Int?
+}
+
+model ChatMessage {
+  id             Int      @id @default(autoincrement())
+  room_id        Int
+  sender_type    String // 'user' | 'vendor' | 'sponsor'
+  sender_id      Int
+  content        String
+  message_type   String? // text, image, file
+  attachment_url String?
+  created_at     DateTime @default(now())
+
+  room      ChatRoom @relation(fields: [room_id], references: [id])
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  Vendor    Vendor?  @relation(fields: [vendorId], references: [id])
+  vendorId  Int?
+  Sponsor   Sponsor? @relation(fields: [sponsorId], references: [id])
+  sponsorId Int?
+}
+
+model Payment {
+  id             Int      @id @default(autoincrement())
+  payer_type     String // 'user' | 'vendor' | 'sponsor'
+  payer_id       Int
+  receiver_type  String // typically 'organizer'
+  receiver_id    Int
+  event_id       Int?
+  purpose        String // 'registration' | 'vendor_fee' | 'sponsorship'
+  amount         Decimal  @db.Decimal
+  currency       String   @default("INR")
+  status         String   @default("pending")
+  payment_method String? // 'razorpay', 'upi', 'credit_card'
+  transaction_id String?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  event     Event?   @relation(fields: [event_id], references: [id])
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    Int?
+  Vendor    Vendor?  @relation(fields: [vendorId], references: [id])
+  vendorId  Int?
+  Sponsor   Sponsor? @relation(fields: [sponsorId], references: [id])
+  sponsorId Int?
+  Refund    Refund[]
+}
+
+model Refund {
+  id            Int      @id @default(autoincrement())
+  payment_id    Int
+  refund_amount Decimal
+  reason        String?
+  created_at    DateTime @default(now())
+
+  payment Payment @relation(fields: [payment_id], references: [id])
+}
