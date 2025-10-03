@@ -1,37 +1,26 @@
-import type { Response, NextFunction } from 'express';
-import asyncHandler from 'express-async-handler';
-import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
-import type { AuthRequest, AuthUser } from '../types/auth.types';
+import type {JwtPayload} from 'jsonwebtoken';
+import jwt from 'jsonwebtoken'
+import config from '../config/index'
+import type { Request, Response, NextFunction } from 'express';
+import { ApiError } from '../utils/appError';
 
-export const protect = asyncHandler(
-  async (req: AuthRequest, res: Response, next: NextFunction) => {
-    const authHeader = req.get('authorization');
-    let token: string | undefined;
-
-    if (authHeader?.startsWith('Bearer')) {
-      token = authHeader.split(' ')[1];
+export const auth = async (req: Request, res: Response, next: NextFunction) => {
+    let token;
+    if (req.headers.authorization?.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
     }
 
     if (!token) {
-      res.status(401);
-      throw new Error('Not authorized, no token');
+        throw new ApiError('not authorized, no token',401)
     }
 
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
+    const decoded = await jwt.verify(token, config.JWT_SECRET());
 
-
-      if (typeof decoded === 'object' && decoded !== null && 'id' in decoded) {
-        req.user = decoded as AuthUser;
-        next();
-      } else {
-        res.status(401);
-        throw new Error('Not authorized, token invalid');
-      }
-    } catch (error) {
-      res.status(401);
-      throw new Error('Not authorized, token failed');
+    if (!decoded) {
+        throw new ApiError('Invalid token or token expired',401)
     }
-  }
-);
+
+    req.user = (decoded as JwtPayload).user;
+    next();
+
+};
