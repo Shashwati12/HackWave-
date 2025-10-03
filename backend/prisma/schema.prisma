@@ -75,6 +75,7 @@ model User {
   name          String
   email         String    @unique
   gender        String?
+  password      String
   role          Roles     @default(User)
   date_of_birth DateTime?
   image_url     String
