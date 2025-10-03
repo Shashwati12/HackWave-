@@ -1,23 +1,10 @@
-import { Request } from 'express';
-
-export interface AuthUser {
-  id: string;
-  [key: string]: any;
-}
-
-export interface AuthRequest extends Request {
-  user?: AuthUser;
-}
-
-
 export interface RegisterData {
   email: string;
   password: string;
   name: string;
   gender: string;
-  stream: string;
+  role: string;
   date_of_birth: string;
-  passing_out_year: number;
 }
 
 export interface UserProfile {
@@ -25,22 +12,11 @@ export interface UserProfile {
   email: string;
   name: string;
   gender: string;
-  stream: string;
+  role: string;
   date_of_birth: string;
-  passing_out_year: number;
-  token?: string;
 }
 
-export interface UserBasic {
-  id: string;
-  email: string;
-}
+export type UserBasic = Pick<UserProfile, 'id' | 'email'>;
 
-export interface UpdateProfileData {
-  email?: string;
-  name?: string;
-  gender?: string;
-  stream?: string;
-  date_of_birth?: string;
-  passing_out_year?: number;
-}
+
+export type UpdateProfileData = Partial<Omit<UserProfile, 'id' >>;

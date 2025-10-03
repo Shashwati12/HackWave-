@@ -1,4 +1,3 @@
-// services/event.service.ts
 import supabase from '../config/supabase.config';
 import type { Event, EventFilters, EventData } from '../types/event.types';
 

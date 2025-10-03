@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
 import * as authService from '../services/auth.service.js';
-import type { AuthRequest } from '../types/auth.types.js';
+import type { RegisterData, UpdateProfileData } from '../types/auth.types.js';
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
-  const user = await authService.register(req.body);
+  const user = await authService.register(req.body as RegisterData);
   res.status(201).json(user);
 });
 
@@ -15,8 +15,8 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getUserIdByEmail = asyncHandler(async (req: Request, res: Response) => {
-  const email = req.query.email as string | undefined;
-  if (!email) {
+  const email = req.query.email;
+  if (!email || typeof email !== 'string') {
     res.status(400).json({ message: 'Email query parameter is required.' });
     return;
   }
@@ -30,7 +30,7 @@ export const getUserIdByEmail = asyncHandler(async (req: Request, res: Response)
   res.status(200).json(user);
 });
 
-export const getProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const getProfile = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user?.id) {
     res.status(401).json({ message: 'Unauthorized' });
     return;
@@ -45,13 +45,13 @@ export const getProfile = asyncHandler(async (req: AuthRequest, res: Response) =
   res.status(200).json(profile);
 });
 
-export const updateProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
+export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
   if (!req.user?.id) {
     res.status(401).json({ message: 'Unauthorized' });
     return;
   }
 
-  const updatedUser = await authService.updateProfile(req.user.id, req.body);
+  const updatedUser = await authService.updateProfile(req.user.id, req.body as UpdateProfileData);
   console.log(req.body);
   res.status(200).json(updatedUser);
 });
