@@ -1,10 +1,13 @@
-import { Button } from "./components/ui/button"
+import { RouterProvider } from 'react-router-dom'
+import AppRouter from './routes/Approuter'
+import { Toaster } from 'react-hot-toast'
 
 function App() {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center">
-      <Button>Click me</Button>
-    </div>
+    <>
+    <RouterProvider router={AppRouter()}/>
+    <Toaster/>
+    </>
   )
 }
 
