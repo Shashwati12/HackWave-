@@ -1,39 +1,39 @@
-// types/db.ts
-
 export interface Event {
-  id: string; 
-  event_name: string;
-  event_description: string;
-  event_creator_id: string | null;  
-  important_dates: Record<string, any> | null; 
-  registration_deadline: string | null; 
-  prizes: Record<string, any> | null; 
-  event_type: 'Online' | 'In Person' | null;
-  venue: string | null;
-  contact_info: string | null;
-  participation_type: 'Solo' | 'Team' | null;
-  max_team_size: number | null;
-  department: string | null;
-  category: string | null;
-  registration_fee: number | null;
-  created_at: string; // timestamp
-  updated_at: string; // timestamp
-  image_url: string | null;
-  rules: string | null;
-  organizer: string | null;
-  max_participants: number; // bigint
-}
-
-export interface Team {
-  id: string; 
-  event_id: string | null; 
+  id: string;
   name: string;
-  leader_id: string | null; 
-  created_at: string; 
+  description: string;
+  event_type: string;
+  department?: string;
+  category?: string;
+  team_size?: number;
+  start_date?: string;
+  end_date?: string;
+  prize?: string;
+  judging_criteria?: string;
+  contact_email?: string;
+  image_url?: string;
+  event_creator_id: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
-export interface TeamMember {
-  team_id: string; 
-  member_id: string; 
-  event_id: string | null; 
+export interface EventData {
+  name: string;
+  description: string;
+  event_type: string;
+  department?: string;
+  category?: string;
+  team_size?: number;
+  start_date?: string;
+  end_date?: string;
+  prize?: string;
+  judging_criteria?: string;
+  contact_email?: string;
+  image_url?: string;
+}
+
+export interface EventFilters {
+  type?: string;
+  department?: string;
+  category?: string;
 }

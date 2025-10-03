@@ -1,11 +1,11 @@
 
-import transporter from '../config/email.config.js';
-import supabase from "../config/supabase.config.js";
-import type { Event } from '../types/event.types.js';
+import transporter from '../config/email.config.ts';
+import supabase from "../config/supabase.config.ts";
+import type { Event } from '../types/registration.types.ts';
 
 
 export const sendRegistrationConfirmation = async (event:Event, userId:string) => {
-    
+
   const { data: user } = await supabase
     .from('users')
     .select('email, name')

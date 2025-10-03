@@ -1,7 +1,7 @@
 // services/team.service.ts
 import supabase from "../config/supabase.config";
 import { sendRegistrationConfirmation } from "./email.service";
-import type { Event, Team, TeamMember } from "../types/event.types";
+import type { Event, Team, TeamMember } from "../types/registration.types";
 
 interface RegisterTeamParams {
   event_id: string;
