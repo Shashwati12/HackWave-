@@ -1,16 +1,12 @@
-// AppRouter.jsx
-import { createBrowserRouter , type RouteObject } from "react-router-dom";
+// AppRouter.ts
+import { createBrowserRouter } from "react-router-dom";
 import { Routes } from "./Routes";
 import AuthRoute from "../context/Authroute";
 import type { AppRoute } from "../Type/RoutesType";
 
-const wrapRoute = (route: AppRoute): RouteObject => {
-  const wrapped: RouteObject = {
+const wrapRoute = (route: AppRoute) => {
+  const wrapped = {
     path: route.path,
-    index: route.index,
-    loader: route.loader,
-    action: route.action,
-    errorElement: route.errorElement,
     element: route.public ? (
       route.element
     ) : (
@@ -18,16 +14,10 @@ const wrapRoute = (route: AppRoute): RouteObject => {
     ),
   };
 
-  if (route.children) {
-    wrapped.children = route.children.map(wrapRoute);
-  }
+  if (route.index) wrapped.index = true;
+  if (route.children) wrapped.children = route.children.map(wrapRoute);
 
   return wrapped;
 };
 
-
-const AppRouter = () => {
-  return createBrowserRouter(Routes.map(wrapRoute));
-};
-
-export default AppRouter;
+export const router = createBrowserRouter(Routes.map(wrapRoute));
