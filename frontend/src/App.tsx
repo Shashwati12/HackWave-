@@ -1,14 +1,15 @@
-import { RouterProvider } from 'react-router-dom'
-import AppRouter from './routes/Approuter'
-import { Toaster } from 'react-hot-toast'
+import { RouterProvider } from "react-router-dom";
+
+import { Toaster } from "react-hot-toast";
+import { router } from "./routes/Approuter";
 
 function App() {
   return (
     <>
-    <RouterProvider router={AppRouter()}/>
-    <Toaster/>
+      <RouterProvider router={router} />
+      <Toaster />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
