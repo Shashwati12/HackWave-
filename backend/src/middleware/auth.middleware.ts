@@ -3,9 +3,8 @@ import jwt from 'jsonwebtoken'
 import config from '../config/index'
 import type { Request, Response, NextFunction } from 'express';
 import { ApiError } from '../utils/appError';
-import type { AuthRequest } from '../types/auth.types';
 
-export const auth = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const auth = async (req: Request, res: Response, next: NextFunction) => {
     let token;
     if (req.headers.authorization?.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1];

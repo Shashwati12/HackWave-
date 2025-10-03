@@ -1,15 +1,13 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { useState, useEffect  } from "react";
+import type { ReactNode } from "react";
+import type { User } from "../Type/AuthType";
+import { AuthContext } from "./useAuth";
 
-export const AuthContext = createContext();
 
-export const useAuth = () => useContext(AuthContext);
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-// Provider component
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // NEW
-
-  // Optional: persist user in localStorage
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
@@ -20,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     setLoading(false);
   }, []);
 
-  const login = (userData) => {
+  const login = (userData: { user: User; token: string }) => {
     setUser(userData.user);
     localStorage.setItem("token", userData.token);
     localStorage.setItem("user", JSON.stringify(userData.user));

@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "./Authcontext";
+
 import type { AuthRouteProps } from "../Type/AuthType";
+import { useAuth } from "./useAuth";
 
 const AuthRoute: React.FC<AuthRouteProps> = ({ children, requiredRoles }) => {
 

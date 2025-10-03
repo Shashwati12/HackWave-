@@ -1,4 +1,4 @@
-import supabase from '../config/supabase.config.js';
+import supabase from '../config/supabase.config.ts';
 import jwt from 'jsonwebtoken';
 import type {
   RegisterData,
@@ -10,8 +10,6 @@ import type {
 import config from '../config/index.ts';
 
 const generateToken = (id: string): string => {
-  
-  
   return jwt.sign({ id }, config.JWT_SECRET());
 };
 
@@ -111,9 +109,8 @@ export const updateProfile = async (
       email: updateData.email,
       name: updateData.name,
       gender: updateData.gender,
-      stream: updateData.stream,
+      stream: updateData.role,
       date_of_birth: updateData.date_of_birth,
-      passing_out_year: updateData.passing_out_year,
     })
     .eq('id', userId)
     .select()

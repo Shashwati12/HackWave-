@@ -10,6 +10,7 @@
     "dev": "bun src/server.ts"
   },
   "dependencies": {
+    "@prisma/client": "^6.16.3",
     "@supabase/supabase-js": "^2.50.5",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
@@ -20,19 +21,24 @@
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
+    "esbuild": "^0.25.10",
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
     "helmet": "^8.1.0",
     "husky": "^9.1.7",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.1",
+    "nodemailer": "^7.0.6",
+    "prisma": "^6.16.3",
     "ts-node": "^10.9.2",
-    "uuid": "^11.1.0"
+    "uuid": "^11.1.0",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.31.0",
     "@types/bun": "latest",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/nodemailer": "^7.0.2",
     "@typescript-eslint/eslint-plugin": "^8.36.0",
     "@typescript-eslint/parser": "^8.36.0",
     "eslint": "^9.31.0",
