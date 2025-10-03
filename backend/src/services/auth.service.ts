@@ -1,4 +1,4 @@
-import supabase from '../config/supabase.config.js';
+import supabase from '../config/supabase.config.ts';
 import jwt from 'jsonwebtoken';
 import type {
   RegisterData,
