@@ -36,3 +36,4 @@ export const checkUserEventRegistration = asyncHandler(async (req:Request, res:R
   const isRegistered = await registrationService.checkUserEventRegistration(userId, eventId);
   res.status(200).json({ isRegistered });
 });
+
