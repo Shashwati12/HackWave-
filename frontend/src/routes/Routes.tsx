@@ -1,19 +1,26 @@
 import type { AppRoute } from "../Type/RoutesType";
 import { Navigate } from "react-router-dom";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
-import Profile from "../pages/Profile";
-import Event from "../pages/Event";
+import Profile from "../components/Host/HostProfile";
+import Event from "../pages/EventPage";
 import Hostevent from "../components/Host/Hostevent";
 import Schedule from "../pages/Schedule";
-import History from "../pages/History";
-import Analytics from "../components/Host/Analytics";
+import History from "../components/Host/HostHistory";
+import Analytics from "../components/Host/HostAnalytics";
 import Sponser from "../components/Host/Sponser";
-import Home from "../pages/Home";
+import { Home } from "../pages/Home";
+import EventPage from "../pages/EventPage";
+
 
 export const Routes: AppRoute[] = [
   {
     path: "/",
     element: <Home/>,
+    public: true,
+  },
+  {
+    path: "/events",
+    element: <EventPage />,
     public: true,
   },
   {

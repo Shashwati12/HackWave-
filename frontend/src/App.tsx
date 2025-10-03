@@ -6,9 +6,8 @@ import { router } from "./routes/Approuter";
 function App() {
   return (
     <>
-    
-    <RouterProvider router={AppRouter()}/>
-    <Toaster/>
+      <RouterProvider router={router} />
+      <Toaster />
     </>
   );
 }

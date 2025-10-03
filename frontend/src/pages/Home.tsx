@@ -35,11 +35,7 @@ export const Home = () => {
               </div>
 
             </div>
-
-            {/* Right Column - Dashboard Preview */}
             <div className="relative">
-              
-              {/* Floating Card - Event Preview */}
               <div className="absolute -top-8 left-0 w-80 p-5 bg-black/60 backdrop-blur-xl rounded-xl border border-white/20 shadow-2xl">
                 <div className="flex items-start justify-between mb-4">
                   <div>

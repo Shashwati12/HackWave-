@@ -1,100 +1,73 @@
-import React, { useState } from "react";
-import { LogOut } from 'lucide-react'
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/useAuth";
+"use client";
+import { useState } from "react";
+import { Sidebar, SidebarBody, SidebarLink } from "../ui-components/sidebar";
+import { motion } from "motion/react";
+import { cn } from "../../lib/utils";
 
-// Define the shape of a single menu item
-interface MenuItem {
+interface SidebarMenuItem {
   label: string;
   path: string;
+  icon: React.ReactNode;
 }
 
-// Props for Sidebar
-interface SidebarProps {
-  SiderbarMenu?: MenuItem[]; // optional array of menu items
+interface SidebarDemoProps {
+  SiderbarMenu: SidebarMenuItem[];
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ SiderbarMenu }) => {
-  const { logout } = useAuth();
-  const navigate = useNavigate()
-  const [dialogBox, setDialogBox] = useState(false)
-
-  const confirmLogout = () => {
-    logout()
-    navigate("/")
-  }
+export function SidebarDemo({ SiderbarMenu }: SidebarDemoProps) {
+  const [open, setOpen] = useState(false);
 
   return (
-    <div className="h-screen w-56 mt-3 bg-gradient-to-b from-white to-blue-50 text-gray-800 p-6 fixed left-0 shadow-xl z-50 rounded-r-2xl border-r border-blue-100">
-      {/* Logo / Title */}
-      <Link
-        to="/"
-        className="flex items-center gap-2 text-blue-600 text-2xl font-extrabold mb-10 transition-all hover:text-green-500"
-      >
-        StoreManager
-      </Link>
-
-      {/* Profile Link */}
-      <Link
-        to="/dashboard"
-        className="flex items-center text-lg font-medium mb-4 px-3 py-2 rounded-lg hover:bg-green-100 hover:text-green-600 transition-all"
-      >
-        Profile
-      </Link>
-
-      {/* Dynamic Menu Items */}
-      {SiderbarMenu && SiderbarMenu.length > 0 ? (
-        SiderbarMenu.map((item, index) => (
-          <Link
-            key={index}
-            to={item.path}
-            className="flex items-center text-lg font-medium mb-4 px-3 py-2 rounded-lg hover:bg-green-100 hover:text-green-600 transition-all"
-          >
-            {item.label}
-          </Link>
-        ))
-      ) : (
-        <span className="text-gray-400 text-sm italic">No data</span>
-      )}
-
-      {/* Logout */}
-      <button
-          onClick={() => setDialogBox(true)}
-          className="flex items-center space-x-3 text-black hover:bg-red-600 px-3 py-2 rounded-lg transition-colors w-full text-left"
-        >
-          <LogOut />
-          <div>Logout</div>
-        </button>
-
-          {dialogBox && (
-      
-          <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex justify-center items-center z-50"
-            onClick={() => setDialogBox(false)}>
-
-          <div className="bg-white p-6 rounded-lg shadow-lg w-80" 
-           onClick={(e) => e.stopPropagation()} >
-            <h2 className="text-lg font-semibold mb-4">Confirm Logout</h2>
-            <p className="mb-6">Are you sure you want to logout?</p>
-            <div className="flex justify-end space-x-4">
-              <button
-                onClick={() => setDialogBox(false)}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmLogout}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Confirm
-              </button>
+    <div className={cn("flex min-h-screen overflow-hidden bg-blue-950 border border-cyan-500")}>
+      <Sidebar open={open} setOpen={setOpen}>
+        <SidebarBody className="justify-between gap-10">
+          <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
+            {open ? <Logo /> : <LogoIcon />}
+            <div className="mt-8 flex flex-col gap-2">
+              {SiderbarMenu.map((link, idx) => (
+                <SidebarLink
+                  key={idx}
+                  link={{
+                    label: link.label,
+                    href: link.path,
+                    icon: link.icon,
+                  }}
+                />
+              ))}
             </div>
           </div>
-        </div>
-      )}
-
+          <div>
+            <SidebarLink
+              link={{
+                label: "Admin",
+                href: "#",
+                icon: (
+                  <img
+                    src="https://assets.aceternity.com/manu.png"
+                    className="h-7 w-7 rounded-full"
+                    alt="Avatar"
+                  />
+                ),
+              }}
+            />
+          </div>
+        </SidebarBody>
+      </Sidebar>
     </div>
   );
-};
+}
 
-export default Sidebar;
+export const Logo = () => (
+  <a href="#" className="flex items-center space-x-2 py-1 text-sm font-medium text-white">
+    <div className="h-5 w-6 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-white" />
+    <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+      Acet Labs
+    </motion.span>
+  </a>
+);
+
+export const LogoIcon = () => (
+  <a href="#" className="flex items-center space-x-2 py-1 text-sm font-medium text-white">
+    <div className="h-5 w-6 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-white" />
+  </a>
+);
