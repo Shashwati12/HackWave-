@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express';
 import asyncHandler from 'express-async-handler';
-import * as authService from '../services/auth.service.js';
-import type { RegisterData, UpdateProfileData } from '../types/auth.types.js';
+import * as authService from '../services/auth.service';
+import type { RegisterData, UpdateProfileData } from '../types/auth.types';
 
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const user = await authService.register(req.body as RegisterData);
