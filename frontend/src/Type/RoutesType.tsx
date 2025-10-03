@@ -5,8 +5,8 @@ import type { ReactNode } from "react";
 export interface AppRoute extends Omit<RouteObject, "children"> {
   path: string;
   element: ReactNode;
-  public?: boolean;     // whether login is required
-  roles?: string[];     // allowed roles
+  public?: boolean;     
+  roles?: string[];     
   index?: boolean;
-  children?: AppRoute[]; // recursive children
+  children?: AppRoute[]; 
 }
