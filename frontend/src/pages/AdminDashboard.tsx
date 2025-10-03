@@ -1,4 +1,5 @@
 "use client";
+import React from 'react'
 import { SidebarDemo } from "../components/dashboard/Sidebar";
 import { IconUsers, IconBuildingStore, IconStar, IconUserPlus, IconPlus, IconUser } from "@tabler/icons-react";
 

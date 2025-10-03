@@ -10,7 +10,7 @@ import Analytics from "../components/Host/HostAnalytics";
 import Sponser from "../components/Host/Sponser";
 import { Home } from "../pages/Home";
 import EventPage from "../pages/EventPage";
-
+import ContactPage from "../pages/ContactPage";
 
 export const Routes: AppRoute[] = [
   {
@@ -21,6 +21,11 @@ export const Routes: AppRoute[] = [
   {
     path: "/events",
     element: <EventPage />,
+    public: true,
+  },
+  {
+    path: "/contact",
+    element: <ContactPage />,
     public: true,
   },
   {
