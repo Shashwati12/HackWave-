@@ -22,7 +22,7 @@ const DashboardLayout = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-black text-white">
         <p>Loading...</p>
       </div>
     );
@@ -51,13 +51,13 @@ const DashboardLayout = () => {
   ];
 
   return (
-    <div className={cn("flex w-full h-screen overflow-hidden bg-black border border-cyan-500")}>
+    <div className="flex h-screen bg-black">
       {/* Sidebar */}
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
+      <Sidebar open={open} setOpen={setOpen} className="flex-shrink-0 h-full">
+        <SidebarBody className="flex flex-col justify-between h-full overflow-hidden gap-10">
+          <div className="flex flex-col overflow-hidden">
             {open ? <Logo /> : <LogoIcon />}
-            <div className="mt-8 flex flex-col gap-2">
+            <div className="mt-8 flex flex-col gap-2 overflow-y-auto scrollbar-thin scrollbar-thumb-[#16D3AC]/50 scrollbar-track-transparent">
               {links.map((link, idx) => (
                 <SidebarLink key={idx} link={link} />
               ))}
@@ -82,8 +82,13 @@ const DashboardLayout = () => {
       </Sidebar>
 
       {/* Main content area */}
-      <div className={`flex-1 ${isProfilePage ? "" : "pt-14"} p-4 md:p-10`}>
-        {RoleDashboard ? <RoleDashboard /> : <div>No user dashboard available</div>}
+      <div
+        className={cn(
+          "flex-1 overflow-y-auto h-full p-4 md:p-10 scrollbar-thin scrollbar-thumb-[#16D3AC]/50 scrollbar-track-transparent",
+          isProfilePage ? "" : "pt-14"
+        )}
+      >
+        {RoleDashboard ? <RoleDashboard /> : <div className="text-white"></div>}
         <Outlet />
       </div>
     </div>
