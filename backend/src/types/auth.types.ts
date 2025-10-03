@@ -14,6 +14,7 @@ export interface UserProfile {
   gender: string;
   role: string;
   date_of_birth: string;
+  token: string,
 }
 
 export type UserBasic = Pick<UserProfile, 'id' | 'email'>;

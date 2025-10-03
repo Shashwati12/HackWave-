@@ -6,49 +6,36 @@ import type {
   UserBasic,
   UpdateProfileData,
 } from '../types/auth.types.ts';
-
+import bcrypt from 'bcrypt'
+import {prisma} from '../config/prisma.config.ts';
 import config from '../config/index.ts';
 
-const generateToken = (id: string): string => {
-  
-  
+const generateToken = (id: number): string => {
   return jwt.sign({ id }, config.JWT_SECRET());
 };
 
-export const register = async (userData: RegisterData) => {
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: userData.email,
-    password: userData.password,
-  });
+export const register = async (userData: RegisterData): Promise<UserProfile> => {
+  const hashedPassword = await bcrypt.hash(userData.password, 10);
 
-  if (authError) throw new Error(authError.message);
-  if (!authData?.user) throw new Error('User not created');
-
-  const userId = authData.user.id;
-
-  const { data: user, error } = await supabase
-    .from('users')
-    .insert([
-      {
-        id: userId,
-        email: userData.email,
+  try {
+    const user = await prisma.user.create({
+      data: {
         name: userData.name,
+        email: userData.email,
         gender: userData.gender,
         role: userData.role,
         date_of_birth: userData.date_of_birth,
-       
-      },
-    ])
-    .select()
-    .single();
-
-  if (error) throw error;
+      }
+    });
 
   return {
     ...user,
     token: generateToken(user.id),
-  } as UserProfile;
-};
+  }
+}catch(e) {
+  console.log(e);
+}
+}
 
 export const login = async (email: string, password: string): Promise<UserProfile> => {
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
