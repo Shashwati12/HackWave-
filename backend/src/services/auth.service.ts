@@ -17,7 +17,7 @@ const generateToken = (id: number): string => {
   return jwt.sign({ id }, config.JWT_SECRET());
 };
 
-export const register = async (userData: RegisterData): Promise<> => {
+export const register = async (userData: RegisterData) => {
 
   const hashedPassword = await bcrypt.hash(userData.password, 10);
     const user = await prisma.user.create({
@@ -30,12 +30,32 @@ export const register = async (userData: RegisterData): Promise<> => {
         password: hashedPassword
       }
     });
+
+     if (userData.role === 'Vendor') {
+    await prisma.vendor.create({
+      data: {
+        userId: user.id,
+        service_type: null,
+        fees: null,
+      },
+    });
+  }
+
+    if (userData.role === 'Sponser') {
+    await prisma.sponsor.create({
+      data: {
+        userId: user.id,
+        pledged_amount: null,
+      },
+    });
+  }
+  
   return {
     user: user,
   }
 }
 
-export const login = async (email: string, password: string): Promise<UserProfile> => {
+export const login = async (email: string, password: string) => {
 
   try {
   const user = await prisma.user.findUnique({
