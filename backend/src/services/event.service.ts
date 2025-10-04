@@ -95,3 +95,25 @@ export const getEventParticipationCount = async (eventId: number) => {
   if (error) throw error;
   return count ?? 0;
 };
+
+export const getVendorForEvent = async(eventId: number) => {
+    return await prisma.eventVendor.findMany({
+        where: {
+            event_id: eventId
+        },
+        include: {
+            vendor: true
+        }
+    })
+}
+
+export const getSponsorForEvent = async(eventId: number) => {
+    return await prisma.eventSponsor.findMany({
+        where: {
+            event_id: eventId
+        },
+        include: {
+            sponsor: true
+        }
+    })
+}
