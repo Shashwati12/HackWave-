@@ -1,4 +1,4 @@
-import type {JwtPayload} from 'jsonwebtoken';
+import type {Jwt, JwtPayload} from 'jsonwebtoken';
 import jwt from 'jsonwebtoken'
 import config from '../config/index'
 import type { Request, Response, NextFunction } from 'express';
@@ -20,7 +20,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
         throw new ApiError('Invalid token or token expired',401)
     }
 
-    req.user = (decoded as JwtPayload).user;
+    req.userId = (decoded as JwtPayload).id;
     next();
 
 };

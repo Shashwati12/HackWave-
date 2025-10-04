@@ -4,7 +4,7 @@ import {MulterFile} from 'multer';
 declare global {
     namespace Express {
         interface Request {
-            user?: { id: string };
+            userId: number;
             file?: MulterFile; 
         }
     }

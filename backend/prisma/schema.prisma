@@ -15,10 +15,13 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+
 model Event {
   id                    Int       @id @default(autoincrement())
   event_creator_id      Int
   important_dates       DateTime?
+  event_name            String
+  event_description     String
   registration_deadline DateTime?
   prizes                String?
   event_type            String?
@@ -26,6 +29,7 @@ model Event {
   contact_info          String?
   participation_type    String?
   max_team_size         Int?
+  category              String?
   department            String?
   registration_fee      Decimal?
   created_at            DateTime  @default(now())
