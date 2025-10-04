@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { IoIosContact } from "react-icons/io";
 
 import {
   motion,
@@ -9,6 +10,7 @@ import {
   useMotionValueEvent,
 } from "motion/react";
 import { cn } from "../../lib/utils";
+import { useAuth } from "../../context/useAuth";
 
 type NavItem = {
   name: string;
@@ -43,6 +45,8 @@ export const FloatingNav: React.FC<FloatingNavProps> = ({
     }
   });
 
+  const { user } = useAuth();
+
 
   return (
     <AnimatePresence mode="wait">
@@ -65,14 +69,28 @@ export const FloatingNav: React.FC<FloatingNavProps> = ({
             <span className="hidden sm:block text-base font-medium">{navItem.name}</span>
           </a>
         ))}
-
-        <button
+        { !user ? ( <>
+               <button
          onClick={() => window.location.href = "/login"}
         className="relative px-6 py-3 text-base font-medium border rounded-full bg-cyan-500 border-neutral-200 dark:border-white/[0.2] text-black dark:text-white"
          >
           <span>Login</span>
           <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
         </button>
+              
+        </> ) : 
+        ( <>
+        <button
+         onClick={() => window.location.href = "/dashboard"}
+        className="relative px-6 py-3 text-base font-medium border rounded-full bg-cyan-500 border-neutral-200 dark:border-white/[0.2] text-black dark:text-white"
+         >
+          <span><IoIosContact /></span>
+          <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
+        </button>
+        </>)
+
+        }
+        
       </motion.div>
     </AnimatePresence>
   );
