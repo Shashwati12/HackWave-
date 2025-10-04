@@ -30,6 +30,26 @@ export const register = async (userData: RegisterData) => {
         password: hashedPassword
       }
     });
+
+     if (userData.role === 'Vendor') {
+    await prisma.vendor.create({
+      data: {
+        userId: user.id,
+        service_type: null,
+        fees: null,
+      },
+    });
+  }
+
+    if (userData.role === 'Sponser') {
+    await prisma.sponsor.create({
+      data: {
+        userId: user.id,
+        pledged_amount: null,
+      },
+    });
+  }
+  
   return {
     user: user,
   }

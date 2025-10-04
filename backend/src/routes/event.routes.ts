@@ -1,7 +1,7 @@
 import { Router } from "express";
 import type { Response, Request, NextFunction} from "express";
 import type { Multer } from "multer";
-import { createEvent, getEventById, getEvents, getEventsForCurrentUser, deleteEvent, getEventParticipationCount, updateEvent , getHostedEvent} from "../controllers/event.controller";
+import { getSponsorsForEvent, getVendorsForEvent, createEvent, getEventById, getEvents, getEventsForCurrentUser, deleteEvent, getEventParticipationCount, updateEvent , getHostedEvent} from "../controllers/event.controller";
 import { eventSchema } from "../validations/event.validation";
 import { validate } from "../middleware/validate";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -32,7 +32,6 @@ export default function eventRouter(upload: Multer, supabase : SupabaseClient) {
     router.put("/:eventId", validate(eventSchema), updateEvent);
     router.delete("/:eventId", deleteEvent);
     router.get("/:eventId/participant", getEventParticipationCount);
-    router.post('/:eventId' , addmemberEvent)
 
   return router;
 }

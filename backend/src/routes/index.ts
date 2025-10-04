@@ -12,9 +12,12 @@ export default function routes(upload: Multer, supabase : SupabaseClient) {
   const router = Router();
     
   router.use('/auth', authRouter());
+  router.use('/sponsors', sponsorRouter());
+  router.use('/vendors', vendorRouter());
   router.use(auth)
   router.use('/registration',registrationRouter());
   router.use('/event', eventRouter(upload, supabase));
+  
 
   return router;
 }

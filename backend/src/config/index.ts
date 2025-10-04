@@ -9,4 +9,10 @@ export default {
         }
         return process.env.JWT_SECRET;
     },
+    redis_username: process.env.REDIS_USERNAME,
+    redis_password: process.env.REDIS_PASSWORD,
+    redis_port: process.env.REDIS_PORT,
+    redis_host: process.env.REDIS_HOST,
+    Redis_local_port: process.env.REDIS_LOCAL_PORT
+
 };
