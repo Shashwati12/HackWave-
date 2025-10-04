@@ -39,27 +39,27 @@
 
 
 import asyncHandler from "express-async-handler";
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import { ApiError } from "../utils/appError";
 import * as registrationService from "../services/registration.service";
 
 export const registerForEvent = asyncHandler(async (req: Request, res: Response) => {
   const { event_id, team_name, member_ids } = req.body;
 
-  if (!req.user) {
-    throw new ApiError("User not authenticated",401);
+  if (!req.userId) {
+    throw new ApiError("User not authenticated", 401);
   }
 
   if (!event_id || !team_name || !Array.isArray(member_ids)) {
     throw new ApiError("Invalid request payload", 400);
   }
 
-  const leader_id = req.user.id;
+  const leader_id = req.userId;
 
   const result = await registrationService.registerTeamForEvent({
     event_id: Number(event_id),
     team_name,
-    leader_id: Number(leader_id),
+    leader_id,
     member_ids: member_ids.map(Number),
   });
 
@@ -68,7 +68,7 @@ export const registerForEvent = asyncHandler(async (req: Request, res: Response)
   }
 
   if (!result.team) {
-    throw new ApiError("Failed to create team",500);
+    throw new ApiError("Failed to create team", 500);
   }
 
   res.status(201).json({
@@ -80,13 +80,13 @@ export const registerForEvent = asyncHandler(async (req: Request, res: Response)
 
 
 export const getUserRegistrations = asyncHandler(async (req: Request, res: Response) => {
-  if (!req.user) {
+  if (!req.userId) {
     throw new ApiError("User ID missing", 401);
   }
 
-  const userId = req.user.id;
+  const userId = req.userId;
 
-  const registrations = await registrationService.getUserRegistrations(Number(userId));
+  const registrations = await registrationService.getUserRegistrations(userId);
 
   if (!registrations) {
     throw new ApiError("No registrations found for this user", 404);

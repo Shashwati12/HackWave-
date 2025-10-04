@@ -98,47 +98,54 @@
 import { prisma } from "../config/prisma.config";
 import type { RegisterTeamParams } from "../types/registration.types";
 
+
 export const registerTeamForEvent = async ({
   event_id,
   team_name,
   leader_id,
   member_ids,
 }: RegisterTeamParams) => {
-  
+ 
   const event = await prisma.event.findUnique({
     where: { id: event_id },
   });
 
+  if (!event) {
+    return { event: null, team: null };
+  }
+
+
   const team = await prisma.team.create({
     data: {
       name: team_name,
-      eventId: event_id,
-      leaderId: leader_id,
+      event_id,
+      leader_id,
     },
   });
+
 
   if (!member_ids.includes(leader_id)) {
     member_ids.push(leader_id);
   }
 
   await prisma.teamMember.createMany({
-    data: member_ids.map((memberId) => ({
-      teamId: team.id,
-      memberId,
-      eventId: event_id,
+    data: member_ids.map((member_id) => ({
+      team_id: team.id,
+      member_id,      
+      event_id,
     })),
     skipDuplicates: true,
   });
 
-
-  return { team, event };
+  return { event, team };
 };
 
 export const getUserRegistrations = async (userId: number) => {
   const registrations = await prisma.teamMember.findMany({
-    where: { memberId: userId },
+    where: { member_id: userId },
     include: {
       event: true, 
+      team : true,
     },
   });
 
@@ -147,17 +154,26 @@ export const getUserRegistrations = async (userId: number) => {
 
 export const getTeamsByEvent = async (eventId: number) => {
   const teams = await prisma.team.findMany({
-    where: { eventId },
+    where: { event_id: eventId },
+    include: {
+      members: {
+        include: {
+          member: true,
+        },
+      },
+      leader: true, 
+      event: true,   
+    },
   });
 
-  return teams ?? [];
+  return teams;
 };
 
 export const checkUserEventRegistration = async (userId: number, eventId: number) => {
   const registration = await prisma.teamMember.findFirst({
     where: {
-      memberId: userId,
-      eventId: eventId,
+      member_id: userId,
+      event_id: eventId,
     },
   });
 
