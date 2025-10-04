@@ -11,7 +11,7 @@ import Sponser from "../components/Host/Sponser";
 import { Home } from "../pages/Home";
 import EventPage from "../pages/EventPage";
 import LoginPage from "../pages/LoginPage";
-import RegisterForm from "../components/User/RegisterEvent";
+import SignUpPage from "../pages/SignupPage";
 
 
 
@@ -31,6 +31,16 @@ export const Routes: AppRoute[] = [
     element : <LoginPage/>,
     public: true,
   },
+   {
+    path : '/signup',
+    element : <SignUpPage/>,
+    public: true,
+  },
+   {
+       path : '/hostEvent',
+       element :<Hostevent/>,
+       roles: ["Host" , "Admin"]
+    },
   {
     path: "/dashboard",
     element: <DashboardLayout />,
@@ -51,11 +61,7 @@ export const Routes: AppRoute[] = [
         element: <Event/>,
         roles: ["User", "Host", "Vendor" , "Sponser" , "Admin"],
       },
-      {
-        path : 'hostEvent',
-        element :<Hostevent/>,
-        roles: ["Host" , "Admin"]
-      },
+     
       {
         path : "schedule",
         element : <Schedule/>,
