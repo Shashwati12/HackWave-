@@ -10,8 +10,10 @@ import AnalyticsDashboard from "../pages/Analytics";
 import Sponser from "../components/Host/Sponser";
 import { Home } from "../pages/Home";
 import EventPage from "../pages/EventPage";
-import LoginPage from "../pages/LoginPage";
-import RegisterForm from "../components/User/RegisterEvent";
+import HostHistory from "../components/Host/HostHistory";
+import SponserHistory from "../components/Sponser/SponserHistory";
+import VendorHistory from "../components/Vendor/VendorHistory";
+
 
 
 
@@ -26,11 +28,26 @@ export const Routes: AppRoute[] = [
     element: <EventPage />,
     public: true,
   },
-  {
-    path : '/login',
-    element : <LoginPage/>,
+    {
+    path: "/h-history",
+    element: <HostHistory />,
+    public: true,
+  },  {
+    path: "/s-history",
+    element: <SponserHistory />,
     public: true,
   },
+    {
+    path: "/v-history",
+    element: <VendorHistory />,
+    public: true,
+  },
+    {
+    path: "/events",
+    element: <EventPage />,
+    public: true,
+  },
+  
   {
     path: "/dashboard",
     element: <DashboardLayout />,
