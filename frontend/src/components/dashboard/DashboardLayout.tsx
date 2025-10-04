@@ -17,7 +17,7 @@ import AdminDashboard from "../../pages/AdminDashboard";
 
 const DashboardLayout = () => {
   const location = useLocation();
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   const [open, setOpen] = useState(false);
 
   if (loading) {
@@ -49,10 +49,13 @@ const DashboardLayout = () => {
   const sidebarLinks = RoleDashboard?.sidebarMenu || [];
 
   const logoutLink = {
-    label: "Logout",
-    href: "/logout",
-    icon: <IconLogout className="h-5 w-5 text-red-300" />,
-  };
+  label: "Logout",
+  href: "#", // prevent navigation
+  icon: <IconLogout className="h-5 w-5 text-red-300" />,
+  onClick: () => {
+    logout(); // ✅ call context logout
+  },
+};
 
   return (
     <div className="relative flex h-screen overflow-hidden bg-black">
@@ -103,7 +106,7 @@ const DashboardLayout = () => {
                 transition={{ delay: 0.4 }}
                 className={cn("mt-4", !open && "flex justify-center")}
               >
-                <SidebarLink link={logoutLink} />
+                <SidebarLink link={logoutLink}  />
               </motion.div>
             </div>
 

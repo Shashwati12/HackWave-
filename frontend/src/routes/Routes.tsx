@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import Event from "../pages/EventPage";
 import Hostevent from "../components/Host/Hostevent";
 import Schedule from "../pages/Schedule";
-import HistoryPage from "../pages/History";
+import HistoryPage from "../pages/userHistory";
 import AnalyticsDashboard from "../pages/Analytics";
 //import Sponsor from "../components/Host/Sponsor";
 import { Home } from "../pages/Home";
@@ -12,11 +12,14 @@ import LoginPage from "../pages/LoginPage";
 import DashboardLayout from "../components/dashboard/DashboardLayout";
 import { RoleBasedProfile } from "../components/RoleBasedProfile";
 import CertificatePage from "../components/User/Certificates";
+import UserHistoryPage from "../pages/userHistory";
+import ContactPage from "../pages/ContactPage";
 
 export const Routes: AppRoute[] = [
   { path: "/", element: <Home />, public: true },
   { path: "/events", element: <EventPage />, public: true },
   { path: "/login", element: <LoginPage />, public: true },
+  { path: "/contact", element: <ContactPage />, public: true },
 
   {
     path: "/dashboard",
@@ -30,10 +33,11 @@ export const Routes: AppRoute[] = [
         roles: ["User", "Host", "Vendor", "Sponsor", "Admin"],
       },
       { path: "event", element: <Event />, roles: ["User", "Host", "Vendor", "Sponsor", "Admin"] },
+      { path: "userHistory", element: <UserHistoryPage />, roles: ["User", "Host", "Vendor", "Sponsor", "Admin"] },
       { path: "hostEvent", element: <Hostevent />, roles: ["Host", "Admin"] },
       { path: "schedule", element: <Schedule />, roles: ["User", "Host", "Vendor", "Sponsor", "Admin"] },
       { path: "history", element: <HistoryPage />, roles: ["User", "Host", "Vendor", "Sponsor", "Admin"] },
-      { path: "analytics", element: <AnalyticsDashboard />, roles: ["Host", "Vendor", "Sponsor"] },
+      { path: "analytics", element: <AnalyticsDashboard role='host' />, roles: ["Host", "Vendor", "Sponsor"] },
       //{ path: "sponsor", element: <Sponsor />, roles: ["Host", "Admin"] },
       { path: "certificates", element: <CertificatePage />, roles: ["User"] }
     ],

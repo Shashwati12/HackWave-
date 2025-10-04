@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import { FaPhoneAlt, FaEnvelope, FaClipboardList, FaRegLightbulb, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { Background } from "../components/ShootingStar";
 
 type FormState = { name: string; email: string; message: string };
 
@@ -65,29 +66,7 @@ export default function ContactPage() {
 
   return (
     <div className="relative min-h-screen bg-black text-white font-inter overflow-hidden">
-      {/* Background grid */}
-      <div className="absolute inset-0 opacity-10 mix-blend-screen pointer-events-none">
-        <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 1200 800">
-          <defs>
-            <linearGradient id="g1" x1="0%" x2="100%">
-              <stop offset="0%" stopColor="#36C1F6" stopOpacity="0.08" />
-              <stop offset="50%" stopColor="#657FFF" stopOpacity="0.06" />
-              <stop offset="100%" stopColor="#16D3AC" stopOpacity="0.04" />
-            </linearGradient>
-          </defs>
-          <rect width="1200" height="800" fill="url(#g1)" />
-        </svg>
-      </div>
-
-      {/* Aurora blobs */}
-      <motion.div
-        className="absolute -left-20 -top-16 w-96 h-96 rounded-full blur-3xl opacity-30 bg-gradient-to-r from-[#36C1F6] via-[#657FFF] to-[#16D3AC]"
-        style={{ x: auroraX1, y: auroraY1 }}
-      />
-      <motion.div
-        className="absolute -right-24 -bottom-12 w-96 h-96 rounded-full blur-3xl opacity-20 bg-gradient-to-r from-[#657FFF] via-[#16D3AC] to-[#36C1F6]"
-        style={{ x: auroraX2, y: auroraY2 }}
-      />
+      <Background />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-20">
         {/* Hero */}
