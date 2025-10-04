@@ -1,20 +1,18 @@
-import WebSocket from "ws"
 
-export type ActiveSocket = {
-    ws:WebSocket;
-    room:string;
-    email:string;
+export interface UserContext {
+  id: string; 
+  name: string;
+  role: string; 
+  avatarUrl: string;
 }
 
-export type messageType = "JOIN" | "LEAVE" | "MESSAGE" | "TYPING" | "HISTORY";
 
-export type ChatMessage = {
-    type:messageType;
-    room:string;
-    email:string;
-    image_url:string;
-    message?:string;
-    timestamp?:number;
-    typing?:boolean;
-    messages?:ChatMessage[];
+export interface WebSocketMessage {
+  type: 'MESSAGE' | 'TYPING' | 'MARK_AS_READ';
+  payload: any;
+}
+
+
+export interface MessagePayload {
+  text: string;
 }

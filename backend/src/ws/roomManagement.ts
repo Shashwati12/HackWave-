@@ -1,108 +1,114 @@
+// src/services/chat.service.ts (Corrected roomManagement.ts)
+
 import { WebSocket } from "ws";
-import redisclient from "../config/redis.config";
+import redisClient from "../config/redis.config";
 import { pub, sub } from "../config/pubsub.config";
-import type { ActiveSocket } from "../types/chat.types";
+import type { UserContext } from "../types/chat.types";
 
 
-sub.subscribe("chat", async (message) => {
+const roomToSocketsMap = new Map<string, Set<WebSocket>>();
+const socketToUserMap = new Map<WebSocket, { room: string; user: UserContext }>();
+
+// Subscribe to broadcasts from Redis (this part is correct)
+sub.subscribe("chat", (message) => {
   const { room, data } = JSON.parse(message);
-  for (const client of getActiveSocket()) {
-    if (client.room === room && client.ws.readyState === WebSocket.OPEN) {
-      client.ws.send(JSON.stringify(data));
+  const socketsInRoom = roomToSocketsMap.get(room);
+  if (socketsInRoom) {
+    for (const ws of socketsInRoom) {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(data));
+      }
     }
   }
 });
 
-//add logic:  if no user is present in room delete that room
+//user join rooom
+export async function handleJoin(ws: WebSocket, room: string, user: UserContext) {
+  if (!roomToSocketsMap.has(room)) roomToSocketsMap.set(room, new Set());
+  roomToSocketsMap.get(room)!.add(ws);
+  socketToUserMap.set(ws, { room, user });
 
+  await redisClient.sAdd(`room_online_users:${room}`, user.id.toString());
 
-const activeSockets = new Set<ActiveSocket>();
+  const [history, userCount] = await Promise.all([
+    redisClient.lRange(`history:${room}`, -50, -1),
+    redisClient.sCard(`room_online_users:${room}`),
+  ]);
 
-function getActiveSocket() {
-  return activeSockets;
+  ws.send(JSON.stringify({
+    type: "HISTORY",
+    messages: (history || []).map((item) => JSON.parse(item)),
+  }));
+
+  const joinMsg = { type: "JOIN", user, timestamp: Date.now() };
+  await pub.publish("chat", JSON.stringify({ room, data: joinMsg }));
+  await pub.publish("chat", JSON.stringify({ room, data: { type: "COUNT", count: userCount } }));
+
+  // Automatically mark the room as read when joining.
+  await handleMarkAsRead(room, user);
 }
 
-export async function handleJoin(ws: WebSocket, room: string, email:string,image_url:string) {
-
-  activeSockets.add({ ws, room, email });
-  await redisclient.sAdd(`room:${room}`, email);
-  const history = await redisclient.lRange(`history:${room}`, -20, -1);
-  const count  = await redisclient.sCard(`room:${room}`);
-  const parsedHistory = (history || []).map((item) => JSON.parse(item));
-  ws.send(
-    JSON.stringify({
-      type: "HISTORY",
-      messages: parsedHistory,
-    })
-  );
-
-  const joinmsg = {
-    type: "JOIN",
-    email,
-    image_url,
-    timestamp: Date.now(),
-  };
-
-  const countmsg = {
-    type:"COUNT",
-    count
-  }
-
-  await pub.publish("chat", JSON.stringify({ room: room, data: joinmsg }));
-  await pub.publish("chat", JSON.stringify({ room: room, data: countmsg }));
-}
-
-export async function handleMessage(room: string, email: string, image_url:string, text: string) {
-  const msg = {
+//handle incoming message
+export async function handleMessage(room: string, user: UserContext, text: string) {
+  const messageData = {
     type: "MESSAGE",
-    email,
-    image_url,
+    room, 
+    user, 
     message: text,
     timestamp: Date.now(),
   };
-  await redisclient.rPush(`history:${room}`, JSON.stringify({ msg }));
-  await pub.publish("chat", JSON.stringify({ room, data: msg }));
+
+ 
+  // This sends the task to worker.ts for database persistence.
+  await redisClient.lPush('message_queue', JSON.stringify(messageData));
+
+
+  await redisClient.rPush(`history:${room}`, JSON.stringify(messageData));
+  await pub.publish("chat", JSON.stringify({ room, data: messageData }));
 }
 
-export async function handleTyping(room: string,email: string,image_url:string,isTyping: boolean) {
-  const msg = {
-    type: "TYPING",
-    email,
-    image_url,
-    typing: isTyping,
-    timestamp: Date.now(),
-  };
-  await pub.publish("chat", JSON.stringify({ room, data:msg }));
+//handle typing 
+export async function handleTyping(room: string, user: UserContext, isTyping: boolean) {
+  const typingMsg = { type: "TYPING", user, typing: isTyping };
+  await pub.publish("chat", JSON.stringify({ room, data: typingMsg }));
 }
 
+
+  // This function creates the task for the worker to reset unread counts.
+ 
+export async function handleMarkAsRead(room: string, user: UserContext) {
+  // const task = {
+  //   type: "RESET_UNREAD_COUNT",
+  //   payload: {
+  //     userId: user.id,
+  //     roomId: room,
+  //     // You might need more info here if your ChatParticipant schema is polymorphic
+  //   },
+  // };
+  // await redisClient.lPush('message_queue', JSON.stringify(task));
+  // console.log(`[Server] Queued task to reset unread count for user ${user.id} in room ${room}`);
+}
+
+
+//user leave room
 export async function handleLeave(ws: WebSocket) {
-  const sock = [...activeSockets].find((s) => s.ws === ws);
-  if (!sock) {
-    return;
+  const session = socketToUserMap.get(ws);
+  if (!session) return;
+
+  const { room, user } = session;
+
+  roomToSocketsMap.get(room)?.delete(ws);
+  socketToUserMap.delete(ws);
+
+  await redisClient.sRem(`room_online_users:${room}`, user.id.toString());
+  const remainingUserCount = await redisClient.sCard(`room_online_users:${room}`);
+
+  const leaveMsg = { type: "LEAVE", user, timestamp: Date.now() };
+  await pub.publish("chat", JSON.stringify({ room, data: leaveMsg }));
+  await pub.publish("chat", JSON.stringify({ room, data: { type: "COUNT", count: remainingUserCount } }));
+
+  if (remainingUserCount === 0) {
+    console.log(`Room ${room} is empty. Clearing history.`);
+    await redisClient.del(`history:${room}`);
   }
-  const { room, email } = sock;
-  activeSockets.delete(sock);
-  await redisclient.sRem(`room:${room}`, email);
-  const count = await redisclient.sCard(`room:${room}`);
-
-  if(count>0){
-    const countmsg = {
-      type:"COUNT",
-      count
-    }
-    await pub.publish("chat",JSON.stringify({room,data:countmsg}));
-
-    const leavemsg = {
-      type: "LEAVE",
-      email,
-      timestamp: Date.now(),
-    };
-    await pub.publish("chat", JSON.stringify({ room, data: leavemsg }));
-  }else{
-    await redisclient.del(`room:${room}`)
-  }
-
-
-
-
 }

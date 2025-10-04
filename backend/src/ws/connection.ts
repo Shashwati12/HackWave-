@@ -1,48 +1,53 @@
+// src/connection.handler.ts
+
 import { WebSocket } from "ws";
-import jwt from "jsonwebtoken"
-import type { ChatMessage } from "../types/chat.types";
-import { handleJoin, handleLeave, handleMessage, handleTyping } from "./roomManagement";
-import  config from "../config"
+import { URL } from "url";
+import { getUserFromToken } from "../utils/index"; 
+import { handleJoin, handleLeave, handleMessage, handleTyping } from "./roomManagement"
+import type { WebSocketMessage } from "../types/chat.types";
 
-export function handleConnection(ws:WebSocket,req:any){
-    // const url = new URL(req.url || '' ,`http://${req.headers.host}`);
-    // const token = url.searchParams.get('token');
-    // if(!token){
-    //     return ws.close(4001,'missing token');
-    // }
+export async function handleConnection(ws: WebSocket, req: any) {
+  try {
+    const url = new URL(req.url || '', `http://${req.headers.host}`);
+    const token = url.searchParams.get('token');
+    const roomId = url.searchParams.get('roomId');
 
-    let user:any;
+    if (!token || !roomId) {
+      return ws.close(4001, 'Missing token or roomId');
+    }
 
-    // try{
-    //     user = jwt.verify(token,config.JWT_SECRET());
-    // }catch{
-    //     return ws.close(4002,'Invalid token');
-    // }
+    // Authenticate the user securely on the server
+    const user = await getUserFromToken(token);
+    if (!user) {
+      return ws.close(4002, 'Invalid or expired token');
+    }
 
-    ws.on('message',async(raw)=>{
-        try{
-            const data:ChatMessage = JSON.parse(raw.toString());
+    await handleJoin(ws, roomId, user);
 
-            if(data.type==='JOIN'){
-                await handleJoin(ws,data.room,data.email,data.image_url);
-                console.log("user joined")
-            }
+    ws.on('message', async (rawMessage) => {
+      try {
+        const data: WebSocketMessage = JSON.parse(rawMessage.toString());
+        
+        switch (data.type) {
+          case 'MESSAGE':
+            await handleMessage(roomId, user, data.payload.text);
+            break;
+          case 'TYPING':
+            await handleTyping(roomId, user, data.payload.isTyping);
+            break;
 
-            if(data.type==='MESSAGE'){
-                await handleMessage(data.room,data.email,data.image_url,data.message as string);
-            }
-
-            if(data.type==='TYPING'){
-                await handleTyping(data.room,data.email,data.image_url,data.typing||false);
-            }
-
-        }catch(err){
-            console.error('message error: ',err);
         }
-    })
+      } catch (err) {
+        console.error('Error processing message:', err);
+      }
+    });
 
-    ws.on('close',()=>{
-        handleLeave(ws);
-    })
+    ws.on('close', () => {
+      handleLeave(ws);
+    });
 
+  } catch (err) {
+    console.error('Connection handling error:', err);
+    ws.close(4011, 'Internal server error');
+  }
 }
