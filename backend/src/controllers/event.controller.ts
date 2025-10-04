@@ -12,15 +12,19 @@ const getString = (value: any): string | undefined => {
 
 export const createEvent = asyncHandler(async (req: Request, res: Response) => {
 
-  if (!req.user?.id) throw new ApiError('User not authenticated', 401);
-  const userId = parseInt(req.user.id);
-
+  if (!req.userId) throw new ApiError('User not authenticated', 401);
+  const userId = req.userId;
+  
   let imageUrl: string | undefined;
+
+  if( !req.file) throw new ApiError("FIle not found" , 400);
+
   if (req.file) {
     imageUrl = await uploadImage(supabase, req.file, 'events');
   }
 
-  const eventData: EventData = { ...req.body, image_url: imageUrl };
+  const eventData: EventData = { ...req.body.eventData, image_url: imageUrl };
+  console.log("from conroller" , eventData.event_name);
   const event = await eventService.createEvent(eventData, userId);
 
   res.status(201).json(event);
@@ -36,29 +40,30 @@ export const getEvents = asyncHandler(async (req: Request, res: Response) => {
 
 export const getEventById = asyncHandler(async (req: Request, res: Response) => {
 
-  if (!req.params?.id) throw new ApiError('Event ID is required', 400);
+  if (!req.params?.eventId) throw new ApiError('Event ID is required', 400);
 
-  const id  = parseInt(req.params.id);
+  const id  = parseInt(req.params.eventId);
 
-  const event: Event = await eventService.getEventById(id);
+  const event = await eventService.getEventById(id);
   res.json(event);
 });
 
 
 export const getEventsForCurrentUser = asyncHandler(async (req: Request, res: Response) => {
-  if (!req.user?.id) throw new ApiError('User not authenticated', 401);
-  const id = parseInt(req.user.id)
+  if (!req.userId) throw new ApiError('User not authenticated', 401);
 
-  const events: Event[] = await eventService.getCurrentUserEvents(id);
+  const id = (req.userId)
+
+  const events = await eventService.getCurrentUserEvents(id);
   res.json(events);
 });
 
 export const getHostedEvent = asyncHandler( async ( req : Request , res : Response) => {
 
-  if(!req.user?.id) throw new ApiError('User not found' , 401);
-  const id = parseInt( req.user.id);
+  if(!req.userId) throw new ApiError('User not found' , 401);
+  const id = ( req.userId);
 
-  const HostedEvent : Event[] = await eventService.getHostedEvent(id);
+  const HostedEvent  = await eventService.getHostedEvent(id);
   res.json(HostedEvent);
 })
 
@@ -88,13 +93,15 @@ export const updateEvent = asyncHandler(async (req: Request, res: Response) => {
 
 
 export const deleteEvent = asyncHandler(async (req: Request, res: Response) => {
-  if (!req.user?.id) throw new ApiError('User not authenticated', 401);
-  const userId = parseInt(req.user.id);
+  if (!req.userId) throw new ApiError('User not authenticated', 401);
+  const userId = (req.userId);
 
   if (!req.params.eventId) throw new ApiError('Event ID is required', 400);
   const eventId = parseInt(req.params.eventId);
 
-  const existingEvent: Event = await eventService.getEventById(eventId);
+  const existingEvent = await eventService.getEventById(eventId);
+
+  if( !existingEvent) throw new ApiError("Event not Found" , 404);
 
   if (existingEvent.image_url) {
     await deleteImage(supabase, existingEvent.image_url);
@@ -115,35 +122,4 @@ export const getEventParticipationCount = asyncHandler(async (req: Request, res:
   res.status(200).json({ count });
 });
 
-export const RequestSponsorshipAsHost = async(req: Request, res: Response) => {
-    const event_id = req.userId;
-    const {sponsor_id} = req.body;
-    if(!sponsor_id || event_id) throw new ApiError('SponsorId or EventId missing!', 401);
 
-    return await sponsorService.initiateRequest(event_id, sponsor_id);
-}
-
-export const RequestVendorAsHost = async(req: Request, res: Response) => {
-    const event_id = req.userId;
-    const {vendor_id} = req.body;
-    if(!vendor_id || event_id) throw new ApiError('VendorId or EventId missing!', 401);
-
-    return await sponsorService.initiateRequest(event_id, vendor_id);
-}
-
-
-export const getSponsorsForEvent = async(req: Request, res:Response) => {
-
-    const eventId = req.params.id;
-
-    if(!eventId) throw new ApiError("EventId missing!");
-    return await eventService.getSponsorForEvent(parseInt(eventId));
-}
-
-export const getVendorsForEvent = async(req: Request, res:Response) => {
-
-    const eventId = req.params.id;
-
-    if(!eventId) throw new ApiError("EventId missing!");
-    return await eventService.getVendorForEvent(parseInt(eventId));
-}

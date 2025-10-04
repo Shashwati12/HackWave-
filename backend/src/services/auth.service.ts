@@ -17,7 +17,7 @@ const generateToken = (id: number): string => {
   return jwt.sign({ id }, config.JWT_SECRET());
 };
 
-export const register = async (userData: RegisterData): Promise<> => {
+export const register = async (userData: RegisterData) => {
 
   const hashedPassword = await bcrypt.hash(userData.password, 10);
     const user = await prisma.user.create({
@@ -55,7 +55,7 @@ export const register = async (userData: RegisterData): Promise<> => {
   }
 }
 
-export const login = async (email: string, password: string): Promise<UserProfile> => {
+export const login = async (email: string, password: string) => {
 
   try {
   const user = await prisma.user.findUnique({

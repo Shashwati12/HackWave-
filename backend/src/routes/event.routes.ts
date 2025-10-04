@@ -9,9 +9,13 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 export function parseEventData(req: Request, res: Response, next: NextFunction) {
   if (req.body.eventData) {
     try {
-      req.body.eventData = JSON.parse(req.body.eventData);
+      if (typeof req.body.eventData === "string") {
+        // Only parse if it's a stringified JSON
+        req.body.eventData = JSON.parse(req.body.eventData);
+      }
     } catch (error) {
-      return res.status(400).json({ message: 'Invalid JSON in achievementData field' });
+      console.error("EventData parsing error:", error);
+      return res.status(400).json({ message: "Invalid JSON in eventData field" });
     }
   }
   next();
@@ -28,8 +32,6 @@ export default function eventRouter(upload: Multer, supabase : SupabaseClient) {
     router.put("/:eventId", validate(eventSchema), updateEvent);
     router.delete("/:eventId", deleteEvent);
     router.get("/:eventId/participant", getEventParticipationCount);
-    router.get('/sponsors', getSponsorsForEvent);
-    router.get('/vendor', getVendorsForEvent);
 
   return router;
 }
