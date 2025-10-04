@@ -2,6 +2,8 @@ import { success } from 'zod';
 import * as vendorService from '../services/vendor.service';
 import { ApiError } from '../utils/appError';
 import type { Request, Response } from 'express';
+import { sendVendorConfirmation } from '../services/email.service';
+import { prisma } from '../config/prisma.config';
 
 export const getExistingVendors = async(req: Request, res: Response) => {
     let vendors = await vendorService.getVendors();
@@ -40,7 +42,7 @@ export const RequestAsVendor = async(req: Request, res: Response) => {
 
 
 export const deal = async(req: Request, res:Response) => {
-
+    try {
     const vendor_id = req.userId;
     const {event_id, invested_amount, earned_amount, service_type} = req.body;
     req.body.vendor_id = vendor_id;
@@ -51,6 +53,9 @@ export const deal = async(req: Request, res:Response) => {
         success: true,
         message: "event reserved succesfully"
     })
+
+    await sendVendorConfirmation(vendor_id);
+}catch(e) {console.log(e);}
 }
 
 
