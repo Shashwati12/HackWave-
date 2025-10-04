@@ -33,17 +33,20 @@ export const FloatingNav: React.FC<FloatingNavProps> = ({
   const [visible, setVisible] = useState(true);
 
   useMotionValueEvent(scrollYProgress, "change", (current) => {
-    const prev = scrollYProgress.getPrevious();
+  const prev = scrollYProgress.getPrevious();
 
-    if (typeof current === "number" && typeof prev === "number") {
-      const direction = current - prev;
-      if (current < 0.05) {
-        setVisible(true);
-      } else {
-        setVisible(direction < 0);
-      }
+  if (typeof current === "number" && typeof prev === "number") {
+    const direction = current - prev;
+    // 👇 Only care about direction
+    if (direction > 0) {
+      // scrolling down → hide
+      setVisible(false);
+    } else if (direction < 0) {
+      // scrolling up → show
+      setVisible(true);
     }
-  });
+  }
+});
 
   const { user } = useAuth();
 

@@ -24,7 +24,7 @@
 CREATE TYPE "ChatRoomStructure" AS ENUM ('GROUP', 'DIRECT');
 
 -- CreateEnum
-CREATE TYPE "Roles" AS ENUM ('Host', 'Vender', 'Sponser', 'User');
+CREATE TYPE "Roles" AS ENUM ('Host', 'Vender', 'Sponsor', 'User');
 
 -- DropForeignKey
 ALTER TABLE "public"."ChatRoom" DROP CONSTRAINT "ChatRoom_event_id_fkey";

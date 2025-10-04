@@ -251,6 +251,6 @@ enum ChatRoomStructure {
 enum Roles {
   Host
   Vendor
-  Sponser
+  Sponsor
   User
 }

@@ -13,7 +13,7 @@ import {
 import { useState } from 'react';
 
 // ---------- Types ----------
-type Role = 'user' | 'host' | 'vendor' | 'sponser' | 'admin';
+type Role = 'user' | 'host' | 'vendor' | 'sponsor' | 'admin';
 
 interface BaseHistoryItem {
   id: number;
@@ -37,7 +37,7 @@ interface VendorHistoryItem extends BaseHistoryItem {
   category: string;
 }
 
-interface SponserHistoryItem extends BaseHistoryItem {
+interface SponsorHistoryItem extends BaseHistoryItem {
   reach: string;
   engagement: string;
   investment: string;
@@ -118,7 +118,7 @@ const roleConfigs: Record<Role, RoleConfig<any>> = {
       },
     ] as VendorHistoryItem[],
   },
-  sponser: {
+  sponsor: {
     icon: Megaphone,
     title: 'Campaign History',
     color: '#EC4899',
@@ -134,7 +134,7 @@ const roleConfigs: Record<Role, RoleConfig<any>> = {
         investment: '$15,000',
         platform: 'Multi-channel',
       },
-    ] as SponserHistoryItem[],
+    ] as SponsorHistoryItem[],
   },
   admin: {
     icon: Shield,
