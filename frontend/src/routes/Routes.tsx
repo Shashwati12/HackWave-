@@ -18,7 +18,12 @@ import SignUpPage from "../pages/SignupPage";
 
 export const Routes: AppRoute[] = [
   {
-    path: "/",
+    path:"/",
+    element:<Home/>,
+    public:true,
+  },
+  {
+    path: "/chat",
     element: <ChatPage/>,
     public: true,
   },

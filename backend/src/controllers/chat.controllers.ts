@@ -15,6 +15,6 @@ export const getMessageByChatRoom = asyncHandler(async(req:Request,res:Response)
     if(!roomId || !userId){
         throw new ApiError("Room Id missing",401);
     }
-    const messages = await chatServices.getChatByRoomId(userId,roomId);
+    const messages = await chatServices.getChatByRoomId(userId, roomId);
     res.status(200).json(messages);
 })
