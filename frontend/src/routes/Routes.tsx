@@ -17,7 +17,6 @@ import VendorHistory from "../components/Vendor/VendorHistory";
 
 
 
-
 export const Routes: AppRoute[] = [
   {
     path: "/",
