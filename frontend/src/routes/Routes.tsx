@@ -10,13 +10,14 @@ import AnalyticsDashboard from "../pages/Analytics";
 import Sponser from "../components/Host/Sponser";
 import { Home } from "../pages/Home";
 import EventPage from "../pages/EventPage";
+import ChatPage from "../pages/ChatPage";
 
 
 
 export const Routes: AppRoute[] = [
   {
     path: "/",
-    element: <Home/>,
+    element: <ChatPage/>,
     public: true,
   },
   {

@@ -1,5 +1,3 @@
-// src/worker.ts
-
 import {prisma} from "./config/prisma.config";
 import redisclient from "./config/redis.config";
 
