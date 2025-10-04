@@ -48,7 +48,7 @@ export async function uploadImage(
   const filePath = `${folder}/${filename}`;
 
   const { error: uploadError } = await supabase.storage
-    .from("images")
+    .from("event-images")
     .upload(filePath, file.buffer, {
       contentType: file.mimetype,
       upsert: true,
@@ -59,7 +59,7 @@ export async function uploadImage(
   }
 
   const { data: urlData } = supabase.storage
-    .from("images")
+    .from("event-images")
     .getPublicUrl(filePath);
 
   if (!urlData?.publicUrl) {
@@ -76,7 +76,7 @@ export async function deleteImage(
   const { filePath } = extractFilePathAndNameFromUrl(fileUrl);
 
   const { error: deleteError } = await supabase.storage
-    .from("images")
+    .from("event-images")
     .remove([filePath]);
 
   if (deleteError) {

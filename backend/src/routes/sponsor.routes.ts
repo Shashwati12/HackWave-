@@ -1,13 +1,21 @@
 import express from 'express';
-import * as vendorCtrl from "../controllers/sponsor.controller";
-import { Multer } from "multer";
-import { SupabaseClient } from "@supabase/supabase-js";
+import {auth} from '../middleware/auth.middleware';
+import * as sponsorCtrl from "../controllers/sponsor.controller";
 
-export default function membersRouter(
-  upload: Multer,
-  supabase: SupabaseClient,
-) {
 
-    const router = express.Router();
+export default function sponsorRouter() {
+
+  const router = express.Router();
+
+  router.get('/',sponsorCtrl.getExistingSponsors);
+  router.get('/description/:id', sponsorCtrl.getSponsorDescription);
+
+  router.use(auth);
+  router.get('/history', sponsorCtrl.getSponsoredEvents);
+  router.post('/sponsor', sponsorCtrl.sponsorshipRequestAsSponsor);
+  router.post('/confirm', sponsorCtrl.deal);
+  router.patch('/update', sponsorCtrl.updateDetails);
+
+  return router;
     
 }

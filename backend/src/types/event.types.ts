@@ -18,19 +18,29 @@ export interface Event {
 }
 
 export interface EventData {
-  name: string;
-  description: string;
-  event_type: string;
-  department?: string;
+  event_name: string;
+  event_description: string;
+  important_dates?: string;
+  registration_deadline?: string;
+  prizes?: string;
+  event_type?: string;
+  venue?: string;
+  contact_info?: string;
+  participation_type?: string;
+  max_team_size?: number;
   category?: string;
-  team_size?: number;
-  start_date?: string;
-  end_date?: string;
-  prize?: string;
-  judging_criteria?: string;
-  contact_email?: string;
+  department?: string;
+  registration_fee?: number;
   image_url?: string;
+  rules?: string;
+  organizer?: string;
+  layer?: string;
+  max_participants?: number;
+  eligibility?: string;
 }
+
+
+
 
 export interface EventFilters {
   type?: string;

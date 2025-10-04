@@ -1,3 +1,5 @@
+import type { User } from "../generated/prisma";
+
 export interface RegisterData {
   email: string;
   password: string;
@@ -8,15 +10,16 @@ export interface RegisterData {
 }
 
 export interface UserProfile {
-  id: string;
-  email: string;
-  name: string;
-  gender: string;
-  role: string;
-  date_of_birth: string;
+  user: User
+  token: string,
 }
 
 export type UserBasic = Pick<UserProfile, 'id' | 'email'>;
 
 
-export type UpdateProfileData = Partial<Omit<UserProfile, 'id' >>;
+export type UpdateProfileData = {
+  name: string,
+  gender: string,
+  date_of_birth: Date,
+  password: string
+};

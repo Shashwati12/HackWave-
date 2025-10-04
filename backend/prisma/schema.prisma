@@ -9,10 +9,13 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+
 model Event {
   id                    Int            @id @default(autoincrement())
   event_creator_id      Int
   important_dates       DateTime?
+  event_name            String
+  event_description     String
   registration_deadline DateTime?
   prizes                String?
   event_type            String?
@@ -20,6 +23,7 @@ model Event {
   contact_info          String?
   participation_type    String?
   max_team_size         Int?
+  category              String?
   department            String?
   registration_fee      Decimal?
   created_at            DateTime       @default(now())
@@ -29,14 +33,25 @@ model Event {
   organizer             String?
   max_participants      Int?
   eligibility           String?
-  layer                 String?
-  chat_rooms            ChatRoom[]
-  discussions           Discussion[]
-  event_sponsors        EventSponsor[]
-  event_vendors         EventVendor[]
-  payments              Payment[]
-  teams                 Team[]
-  team_members          TeamMember[]
+
+  teams          Team[]
+  team_members   TeamMember[]
+  discussions    Discussion[]
+  event_vendors  EventVendor[]
+  event_sponsors EventSponsor[]
+  chat_rooms     ChatRoom[]
+  payments       Payment[]
+  eventMember    eventParticipant[]
+}
+
+model eventParticipant {
+  user      User   @relation( fields: [userId] ,  references: [id])
+  userId    Int   
+  event     Event  @relation( fields: [eventId] , references: [id])
+  eventId   Int  
+
+  @@id([userId , eventId])
+
 }
 
 model Team {
@@ -79,6 +94,7 @@ model User {
   teams_led         Team[]
   team_members      TeamMember[]
   vendor            Vendor?
+  eventMember       eventParticipant[]
 }
 
 model Discussion {
