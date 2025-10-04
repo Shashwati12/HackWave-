@@ -41,7 +41,7 @@ export const register = async (userData: RegisterData) => {
     });
   }
 
-    if (userData.role === 'Sponser') {
+    if (userData.role === 'Sponsor') {
     await prisma.sponsor.create({
       data: {
         userId: user.id,

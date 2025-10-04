@@ -1,49 +1,48 @@
 import { useState } from "react";
-import { User, Mail, Save, X, Camera, Package, DollarSign, Star, Building, Phone, Globe, Edit } from "lucide-react";
+import { User, Mail, Save, X, Camera, Award, DollarSign, TrendingUp, Building, Phone, Globe, Edit } from "lucide-react";
 import { Background } from "../ShootingStar";
-
-interface VendorData {
+interface SponsorData {
   id: string;
   name: string;
   email: string;
   phone: string;
-  role: "Vendor";
+  role: "Sponsor";
   company_name: string;
-  service_type: string;
+  sponsorship_tier: string;
   website: string;
   date_joined: string;
   image_url: string;
 }
 
-export default function VendorProfile() {
+export default function SponsorProfile() {
   const [isEditing, setIsEditing] = useState(false);
-  const [vendorData, setVendorData] = useState<VendorData>({
-    id: "3",
-    name: "Michael Chen",
-    email: "michael.chen@vendorco.com",
-    phone: "+1 (555) 123-4567",
-    role: "Vendor",
-    company_name: "Elite Catering Services",
-    service_type: "Catering",
-    website: "https://elitecatering.com",
-    date_joined: "2023-03-15",
-    image_url: "https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400",
+  const [sponsorData, setSponsorData] = useState<SponsorData>({
+    id: "4",
+    name: "Jennifer Wilson",
+    email: "jennifer.wilson@techcorp.com",
+    phone: "+1 (555) 987-6543",
+    role: "Sponsor",
+    company_name: "TechCorp Industries",
+    sponsorship_tier: "Gold",
+    website: "https://techcorp.com",
+    date_joined: "2023-01-10",
+    image_url: "https://images.pexels.com/photos/3785079/pexels-photo-3785079.jpeg?auto=compress&cs=tinysrgb&w=400",
   });
 
-  const [editedData, setEditedData] = useState(vendorData);
+  const [editedData, setEditedData] = useState(sponsorData);
 
   const handleEdit = () => {
     setIsEditing(true);
-    setEditedData(vendorData);
+    setEditedData(sponsorData);
   };
 
   const handleSave = () => {
-    setVendorData(editedData);
+    setSponsorData(editedData);
     setIsEditing(false);
   };
 
   const handleCancel = () => {
-    setEditedData(vendorData);
+    setEditedData(sponsorData);
     setIsEditing(false);
   };
 
@@ -55,9 +54,9 @@ export default function VendorProfile() {
   };
 
   const stats = [
-    { label: "Events Served", value: "47", icon: Package, color: "from-[#FF6B6B] to-[#FF8E53]" },
-    { label: "Total Revenue", value: "$45K", icon: DollarSign, color: "from-[#FF8E53] to-[#FFC837]" },
-    { label: "Rating", value: "4.8", icon: Star, color: "from-[#FFC837] to-[#FF6B6B]" },
+    { label: "Events Sponsored", value: "32", icon: Award, color: "from-[#A855F7] to-[#EC4899]" },
+    { label: "Total Investment", value: "$125K", icon: DollarSign, color: "from-[#EC4899] to-[#F59E0B]" },
+    { label: "Brand Reach", value: "50K+", icon: TrendingUp, color: "from-[#F59E0B] to-[#A855F7]" },
   ];
 
   return (
@@ -70,15 +69,15 @@ export default function VendorProfile() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-5xl font-bold bg-gradient-to-r from-[#FF6B6B] to-[#FFC837] bg-clip-text text-transparent mb-2">
-                Vendor Dashboard
+              <h1 className="text-5xl font-bold bg-gradient-to-r from-[#A855F7] to-[#EC4899] bg-clip-text text-transparent mb-2">
+                Sponsor Dashboard
               </h1>
-              <p className="text-xl text-[#B0B3C0]">Manage your services and bookings</p>
+              <p className="text-xl text-[#B0B3C0]">Manage your sponsorships and partnerships</p>
             </div>
             {!isEditing ? (
               <button
                 onClick={handleEdit}
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#FF6B6B] to-[#FF8E53] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#FF6B6B]/30 transition-all duration-300 hover:scale-105"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#A855F7] to-[#EC4899] text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-[#A855F7]/30 transition-all duration-300 hover:scale-105"
               >
                 <Edit className="w-5 h-5" />
                 Edit Profile
@@ -87,7 +86,7 @@ export default function VendorProfile() {
               <div className="flex gap-3">
                 <button
                   onClick={handleSave}
-                  className="flex items-center gap-2 px-6 py-3 bg-[#FFC837] text-black font-semibold rounded-xl hover:bg-white transition-all duration-300 hover:scale-105"
+                  className="flex items-center gap-2 px-6 py-3 bg-[#F59E0B] text-black font-semibold rounded-xl hover:bg-white transition-all duration-300 hover:scale-105"
                 >
                   <Save className="w-5 h-5" />
                   Save
@@ -125,16 +124,16 @@ export default function VendorProfile() {
 
         <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl p-8">
           <div className="flex items-center gap-3 mb-8 pb-6 border-b border-white/10">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF6B6B] to-[#FF8E53] flex items-center justify-center shadow-lg">
-              <Package className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A855F7] to-[#EC4899] flex items-center justify-center shadow-lg">
+              <Award className="w-6 h-6 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-white">Vendor Information</h2>
+            <h2 className="text-3xl font-bold text-white">Sponsor Information</h2>
           </div>
 
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex flex-col items-center gap-4">
               <div className="relative group">
-                <div className="w-48 h-48 rounded-2xl overflow-hidden border-4 border-gradient-to-br from-[#FF6B6B] to-[#FFC837] shadow-2xl shadow-[#FF6B6B]/30">
+                <div className="w-48 h-48 rounded-2xl overflow-hidden border-4 border-gradient-to-br from-[#A855F7] to-[#EC4899] shadow-2xl shadow-[#A855F7]/30">
                   <img
                     src={editedData.image_url}
                     alt="Profile"
@@ -148,11 +147,11 @@ export default function VendorProfile() {
                 )}
               </div>
               <div className="text-center">
-                <div className="px-6 py-2 bg-gradient-to-r from-[#FF6B6B] to-[#FFC837] rounded-lg inline-flex items-center gap-2">
-                  <Package className="w-4 h-4 text-white" />
-                  <span className="text-white font-bold text-sm">{vendorData.role}</span>
+                <div className="px-6 py-2 bg-gradient-to-r from-[#A855F7] to-[#EC4899] rounded-lg inline-flex items-center gap-2">
+                  <Award className="w-4 h-4 text-white" />
+                  <span className="text-white font-bold text-sm">{sponsorData.sponsorship_tier} Sponsor</span>
                 </div>
-                <p className="text-[#B0B3C0] text-sm mt-3">{vendorData.service_type} Services</p>
+                <p className="text-[#B0B3C0] text-sm mt-3">Premium Partnership</p>
               </div>
             </div>
 
@@ -160,7 +159,7 @@ export default function VendorProfile() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-[#B0B3C0] mb-2">
-                    <User className="w-4 h-4 text-[#FF6B6B]" />
+                    <User className="w-4 h-4 text-[#A855F7]" />
                     Full Name
                   </label>
                   {isEditing ? (
@@ -169,18 +168,18 @@ export default function VendorProfile() {
                       name="name"
                       value={editedData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#A855F7] focus:border-transparent transition-all"
                     />
                   ) : (
                     <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white font-medium">
-                      {vendorData.name}
+                      {sponsorData.name}
                     </div>
                   )}
                 </div>
 
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-[#B0B3C0] mb-2">
-                    <Building className="w-4 h-4 text-[#FF8E53]" />
+                    <Building className="w-4 h-4 text-[#EC4899]" />
                     Company Name
                   </label>
                   {isEditing ? (
@@ -189,18 +188,18 @@ export default function VendorProfile() {
                       name="company_name"
                       value={editedData.company_name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#FF8E53] focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#EC4899] focus:border-transparent transition-all"
                     />
                   ) : (
                     <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white font-medium">
-                      {vendorData.company_name}
+                      {sponsorData.company_name}
                     </div>
                   )}
                 </div>
 
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-[#B0B3C0] mb-2">
-                    <Mail className="w-4 h-4 text-[#FFC837]" />
+                    <Mail className="w-4 h-4 text-[#F59E0B]" />
                     Email Address
                   </label>
                   {isEditing ? (
@@ -209,18 +208,18 @@ export default function VendorProfile() {
                       name="email"
                       value={editedData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#FFC837] focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent transition-all"
                     />
                   ) : (
                     <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white">
-                      {vendorData.email}
+                      {sponsorData.email}
                     </div>
                   )}
                 </div>
 
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-[#B0B3C0] mb-2">
-                    <Phone className="w-4 h-4 text-[#FF6B6B]" />
+                    <Phone className="w-4 h-4 text-[#A855F7]" />
                     Phone Number
                   </label>
                   {isEditing ? (
@@ -229,44 +228,43 @@ export default function VendorProfile() {
                       name="phone"
                       value={editedData.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#A855F7] focus:border-transparent transition-all"
                     />
                   ) : (
                     <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white">
-                      {vendorData.phone}
+                      {sponsorData.phone}
                     </div>
                   )}
                 </div>
 
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-[#B0B3C0] mb-2">
-                    <Package className="w-4 h-4 text-[#FF8E53]" />
-                    Service Type
+                    <Award className="w-4 h-4 text-[#EC4899]" />
+                    Sponsorship Tier
                   </label>
                   {isEditing ? (
                     <select
-                      name="service_type"
-                      value={editedData.service_type}
+                      name="sponsorship_tier"
+                      value={editedData.sponsorship_tier}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#FF8E53] focus:border-transparent transition-all appearance-none"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#EC4899] focus:border-transparent transition-all appearance-none"
                     >
-                      <option value="Catering" className="bg-[#0a0a1a]">Catering</option>
-                      <option value="Photography" className="bg-[#0a0a1a]">Photography</option>
-                      <option value="Decoration" className="bg-[#0a0a1a]">Decoration</option>
-                      <option value="Entertainment" className="bg-[#0a0a1a]">Entertainment</option>
-                      <option value="Audio/Visual" className="bg-[#0a0a1a]">Audio/Visual</option>
-                      <option value="Other" className="bg-[#0a0a1a]">Other</option>
+                      <option value="Bronze" className="bg-[#0a0a1a]">Bronze</option>
+                      <option value="Silver" className="bg-[#0a0a1a]">Silver</option>
+                      <option value="Gold" className="bg-[#0a0a1a]">Gold</option>
+                      <option value="Platinum" className="bg-[#0a0a1a]">Platinum</option>
+                      <option value="Diamond" className="bg-[#0a0a1a]">Diamond</option>
                     </select>
                   ) : (
                     <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white">
-                      {vendorData.service_type}
+                      {sponsorData.sponsorship_tier}
                     </div>
                   )}
                 </div>
 
                 <div>
                   <label className="flex items-center gap-2 text-sm font-medium text-[#B0B3C0] mb-2">
-                    <Globe className="w-4 h-4 text-[#FFC837]" />
+                    <Globe className="w-4 h-4 text-[#F59E0B]" />
                     Website
                   </label>
                   {isEditing ? (
@@ -275,11 +273,11 @@ export default function VendorProfile() {
                       name="website"
                       value={editedData.website}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#FFC837] focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent transition-all"
                     />
                   ) : (
                     <div className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white">
-                      {vendorData.website}
+                      {sponsorData.website}
                     </div>
                   )}
                 </div>
@@ -287,7 +285,7 @@ export default function VendorProfile() {
                 {isEditing && (
                   <div className="md:col-span-2">
                     <label className="flex items-center gap-2 text-sm font-medium text-[#B0B3C0] mb-2">
-                      <Camera className="w-4 h-4 text-[#FF6B6B]" />
+                      <Camera className="w-4 h-4 text-[#A855F7]" />
                       Profile Image URL
                     </label>
                     <input
@@ -295,7 +293,7 @@ export default function VendorProfile() {
                       name="image_url"
                       value={editedData.image_url}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-[#B0B3C0] focus:outline-none focus:ring-2 focus:ring-[#FF6B6B] focus:border-transparent transition-all"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-[#B0B3C0] focus:outline-none focus:ring-2 focus:ring-[#A855F7] focus:border-transparent transition-all"
                       placeholder="https://example.com/image.jpg"
                     />
                   </div>

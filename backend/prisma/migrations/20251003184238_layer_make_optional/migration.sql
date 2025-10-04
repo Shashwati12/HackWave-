@@ -6,7 +6,7 @@
 */
 -- AlterEnum
 BEGIN;
-CREATE TYPE "Roles_new" AS ENUM ('Host', 'Vendor', 'Sponser', 'User');
+CREATE TYPE "Roles_new" AS ENUM ('Host', 'Vendor', 'Sponsor', 'User');
 ALTER TABLE "public"."User" ALTER COLUMN "role" DROP DEFAULT;
 ALTER TABLE "User" ALTER COLUMN "role" TYPE "Roles_new" USING ("role"::text::"Roles_new");
 ALTER TABLE "ChatRoom" ALTER COLUMN "groupType" TYPE "Roles_new" USING ("groupType"::text::"Roles_new");
