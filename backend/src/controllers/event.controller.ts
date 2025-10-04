@@ -114,3 +114,36 @@ export const getEventParticipationCount = asyncHandler(async (req: Request, res:
   const count: number = await eventService.getEventParticipationCount(eventId);
   res.status(200).json({ count });
 });
+
+export const RequestSponsorshipAsHost = async(req: Request, res: Response) => {
+    const event_id = req.userId;
+    const {sponsor_id} = req.body;
+    if(!sponsor_id || event_id) throw new ApiError('SponsorId or EventId missing!', 401);
+
+    return await sponsorService.initiateRequest(event_id, sponsor_id);
+}
+
+export const RequestVendorAsHost = async(req: Request, res: Response) => {
+    const event_id = req.userId;
+    const {vendor_id} = req.body;
+    if(!vendor_id || event_id) throw new ApiError('VendorId or EventId missing!', 401);
+
+    return await sponsorService.initiateRequest(event_id, vendor_id);
+}
+
+
+export const getSponsorsForEvent = async(req: Request, res:Response) => {
+
+    const eventId = req.params.id;
+
+    if(!eventId) throw new ApiError("EventId missing!");
+    return await eventService.getSponsorForEvent(parseInt(eventId));
+}
+
+export const getVendorsForEvent = async(req: Request, res:Response) => {
+
+    const eventId = req.params.id;
+
+    if(!eventId) throw new ApiError("EventId missing!");
+    return await eventService.getVendorForEvent(parseInt(eventId));
+}
