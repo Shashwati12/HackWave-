@@ -18,7 +18,6 @@ export default function routes(upload: Multer, supabase : SupabaseClient) {
   router.use('/registration',registrationRouter());
   router.use('/event', eventRouter(upload, supabase));
   
-
   return router;
 }
 
