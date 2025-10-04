@@ -23,6 +23,7 @@ In fact, **45% of event failures** stem from planning and coordination breakdown
 * 🤝 **Vendor & Sponsor Collaboration**: Direct communication channels and integrated workflows.
 * 📲 **Attendee Engagement**: Real-time updates, personalized agendas, and feedback loops.
 * 📊 **Analytics Dashboard**: Post-event insights to measure success and improve future events.
+* 🗨️ **Real time Communication**: Group chat with all of the participants, one-to-one chatting between event organizers and vendors/sponsors. 
 
 ## 🛠️ Tech Stack
 
@@ -33,4 +34,4 @@ In fact, **45% of event failures** stem from planning and coordination breakdown
 
 
 
-Built with ❤️ at [Hackathon Name].
+Built with ❤️ at [Hackwave](https://unstop.com/hackathons/hackwave-lovely-professional-university-lpu-punjab-1561960).
