@@ -45,8 +45,9 @@ export const acceptRequest = async(payload: vendorEventCollab) => {
             event: {
                 connect: { id: payload.event_id }, 
             },
-            vendor: { 
-                connect: { id: response.vendor.id } }
+            vendor: {
+                connect: {userId: payload.vendor_id }, 
+            }
         }
     })
 }

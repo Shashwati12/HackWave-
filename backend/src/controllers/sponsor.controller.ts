@@ -2,7 +2,6 @@ import { success } from 'zod';
 import * as sponsorService from '../services/sponsor.service';
 import { ApiError } from '../utils/appError';
 import type { Request, Response } from 'express';
-import { sendSponsorConfirmation } from '../services/email.service';
 
 export const getExistingSponsors = async(req: Request, res: Response) => {
     let sponsors = await sponsorService.getSponsors();
@@ -53,7 +52,6 @@ export const deal = async(req: Request, res:Response) => {
         success: true,
         message: "Event reserved succesfully"
     })
-    await sendSponsorConfirmation(sponsor_id);
 }
 
 

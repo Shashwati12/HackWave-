@@ -11,7 +11,7 @@ import Sponser from "../components/Host/Sponser";
 import { Home } from "../pages/Home";
 import EventPage from "../pages/EventPage";
 import LoginPage from "../pages/LoginPage";
-import RegisterForm from "../components/User/RegisterEvent";
+import RegisterPage from "../pages/RegisterPage";
 
 
 

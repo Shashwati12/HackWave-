@@ -7,10 +7,11 @@ import {
 } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import { Background } from "../components/ShootingStar";
-import RegisterForm from "../components/User/RegisterEvent";
+import RegisterPage from "./RegisterPage";
 
 type EventType = "Hackathon" | "Workshop" | "Cultural" | "Sports" | "Seminar";
 
+// 1. Update Event interface
 interface Event {
   id: number;
   name: string;
@@ -26,6 +27,7 @@ interface Event {
   aiSuggested?: boolean;
   attendees?: number;
   moreDetails?: string;
+  teamSize?: number;
 }
 
 const sampleEvents: Event[] = [
@@ -45,6 +47,7 @@ const sampleEvents: Event[] = [
     popular: true,
     newEvent: true,
     attendees: 150,
+    teamSize: 4,
   },
   {
     id: 2,
@@ -59,6 +62,7 @@ const sampleEvents: Event[] = [
     registrationOpen: false,
     aiSuggested: true,
     attendees: 300,
+    teamSize: 6,
   },
   {
     id: 3,
@@ -72,6 +76,7 @@ const sampleEvents: Event[] = [
     banner: "https://via.placeholder.com/400x200",
     registrationOpen: true,
     attendees: 80,
+    teamSize: 2,
   },
 ];
 
@@ -84,15 +89,13 @@ const EventsPage = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [expandedEvent, setExpandedEvent] = useState<Event | null>(null);
   const [countdowns, setCountdowns] = useState<{ [key: number]: string }>({});
-  const [ openRegistration , setRegistrationform] = useState(false);
+  const [openRegistration, setRegistrationform] = useState(false);
+
   
-   const handleSuccess = () => {
-    console.log("Registration completed successfully!");
-  };
 
-{/* Registration Form Modal */}
-
-
+  {
+    /* Registration Form Modal */
+  }
 
   // Live countdown
   useEffect(() => {
@@ -127,7 +130,7 @@ const EventsPage = () => {
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden p-6">
       {/* Background */}
-<Background />
+      <Background />
 
       <h1
         style={{ fontFamily: "Nippo, sans-serif" }}
@@ -241,6 +244,12 @@ const EventsPage = () => {
                   <span>Attendees: {event.attendees || 0}</span>
                   <span>{countdowns[event.id]}</span>
                 </div>
+
+                {/* ✅ Team Size line */}
+                <p className="text-sm text-[#B0B3C0] mt-1">
+                  👥 Team Size: {event.teamSize || "N/A"}
+                </p>
+
                 <p className="text-xs text-[#B0B3C0] mt-2">
                   Click to expand full info
                 </p>
@@ -276,6 +285,11 @@ const EventsPage = () => {
                   </span>
                   <span className="bg-white/10 backdrop-blur-sm text-[#B0B3C0] px-3 py-1 rounded-full text-sm">
                     📍 Venue: {expandedEvent.venue}
+                  </span>
+
+                  {/* ✅ Team Size pill */}
+                  <span className="bg-white/10 backdrop-blur-sm text-[#B0B3C0] px-3 py-1 rounded-full text-sm">
+                    👥 Team Size: {expandedEvent.teamSize || "N/A"}
                   </span>
                 </div>
               </div>
@@ -375,7 +389,10 @@ const EventsPage = () => {
                 <FaShareAlt /> Share
               </button>
               <button
-               onClick={ () => {  console.log(expandedEvent) ; setRegistrationform(true)}}
+                onClick={() => {
+                  console.log(expandedEvent);
+                  setRegistrationform(true);
+                }}
                 className="bg-[#657FFF] text-white px-4 py-2 rounded-xl font-semibold hover:scale-105 transition-transform"
               >
                 Register
@@ -394,13 +411,11 @@ const EventsPage = () => {
         .duration-700 { transition: transform 0.7s; }
       `}</style>
 
-
-
       {openRegistration && expandedEvent && (
-  <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center z-[100] p-4">
-    <RegisterForm event={expandedEvent} onSuccess={handleSuccess} />
-  </div>
-)}
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center z-[100] p-4">
+          <RegisterPage eventId={String(expandedEvent.id)} />
+        </div>
+      )}
     </div>
   );
 };
