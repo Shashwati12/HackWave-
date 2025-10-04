@@ -9,7 +9,7 @@ import { teamSchema } from "../validations/registration.validation";
 export default function registrationRouter() {
   const router = Router();
 
-    router.post('/', validate(teamSchema), registerForEvent);
+    router.post('/',validate(teamSchema), registerForEvent);
     router.get('/', getUserRegistrations);
     router.get('/:eventId', getTeamsByEvent);
     router.get('/check-user/:userId/:eventId', checkUserEventRegistration);

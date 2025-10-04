@@ -5,12 +5,15 @@ import Profile from "../components/Host/HostProfile";
 import Event from "../pages/EventPage";
 import Hostevent from "../components/Host/Hostevent";
 import Schedule from "../pages/Schedule";
-import History from "../components/Host/HostHistory";
-import Analytics from "../components/Host/HostAnalytics";
+import HistoryPage from "../pages/History";
+import AnalyticsDashboard from "../pages/Analytics";
 import Sponser from "../components/Host/Sponser";
 import { Home } from "../pages/Home";
 import EventPage from "../pages/EventPage";
-import RegisterPage from "../pages/RegisterPage";
+import LoginPage from "../pages/LoginPage";
+import RegisterForm from "../components/User/RegisterEvent";
+
+
 
 export const Routes: AppRoute[] = [
   {
@@ -23,15 +26,15 @@ export const Routes: AppRoute[] = [
     element: <EventPage />,
     public: true,
   },
-    {
-    path: "/register",
-    element: <RegisterPage />,
+  {
+    path : '/login',
+    element : <LoginPage/>,
     public: true,
   },
   {
     path: "/dashboard",
     element: <DashboardLayout />,
-    roles: ["User", "Host", "Vender" , "Sponser" , "Admin"],
+    roles: ["User", "Host", "Vendor" , "Sponser" , "Admin"],
     children: [
       {
         path: "", 
@@ -40,12 +43,13 @@ export const Routes: AppRoute[] = [
       {
         path: "profile",
         element: <Profile />,
-        roles: ["User", "Host", "Vender" , "Sponser" , "Admin"],
+        public: true,
+        roles: ["User", "Host", "Vendor" , "Sponser" , "Admin"],
       },
       {
         path : 'event',
         element: <Event/>,
-        roles: ["User", "Host", "Vender" , "Sponser" , "Admin"],
+        roles: ["User", "Host", "Vendor" , "Sponser" , "Admin"],
       },
       {
         path : 'hostEvent',
@@ -55,17 +59,17 @@ export const Routes: AppRoute[] = [
       {
         path : "schedule",
         element : <Schedule/>,
-        roles: ["User", "Host", "Vender" , "Sponser" , "Admin"],
+        roles: ["User", "Host", "Vendor" , "Sponser" , "Admin"],
       },
         {
         path : "history",
-        element : <History/>,
-        roles: ["User", "Host", "Vender" , "Sponser" , "Admin"],
+        element : <HistoryPage />,
+        roles: ["User", "Host", "Vendor" , "Sponser" , "Admin"],
       },
       {
         path : "analytics",
-        element : <Analytics/>,
-        roles: ["User", "Host", "Vender" , "Sponser" , "Admin"],
+        element : <AnalyticsDashboard />,
+        roles: ["Host", "Vender" , "Sponser" ],
       },
       {
         path : "sponser",

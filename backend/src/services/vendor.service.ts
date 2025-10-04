@@ -1,31 +1,8 @@
 import {prisma} from '../config/prisma.config';
-import type { vendorData,vendorEventCollab } from '../types/vendor.types';
+import type { vendorData, vendorEventCollab } from '../types/vendor.types';
+import { ApiError } from '../utils/appError';
 
 
-export const createVendor = async(name: string, email: string, service_type: string) => {
-    return await prisma.vendor.create({
-        data: {
-            email,
-            name,
-            service_type,
-        }
-    })
-}
-
-export const updateVendor = async(id: number, payload: vendorData) => {
-    const { name, ...rest } = payload;
-
-  const dataToUpdate = Object.fromEntries(
-    Object.entries({ name, ...rest }).filter(([_, v]) => v !== undefined)
-  );
-
-  if (JSON.stringify(dataToUpdate) === "{}") throw new ApiError("No fields passed for updation", 400);
-
-  return await prisma.vendor.update({
-    where: { id },
-    data: dataToUpdate,
-  });
-}
 
 export const getVendors = async() => {
     return await prisma.vendor.findMany();
@@ -33,15 +10,14 @@ export const getVendors = async() => {
 
 export const getVendorDescription = async(id: number) => {
     return await prisma.vendor.findUnique({
-        where: {id: id}
+        where: {id: id},
+        include: {
+            user: true
+        }
     })
+
 }
 
-export const deleteVendor = async(id: number) => {
-    return await prisma.vendor.delete({
-        where: {id: id}
-    })
-}
 
 export const initiateRequest = async(eventId: number, vendorId: number) => {
     return await prisma.request.create({
@@ -53,24 +29,63 @@ export const initiateRequest = async(eventId: number, vendorId: number) => {
 }
 
 export const acceptRequest = async(payload: vendorEventCollab) => {
+
+    const response = await prisma.user.findFirst({
+    where: { id: payload.vendor_id },
+    include: {vendor: true}
+    });
+
+    if(!response?.vendor) throw new ApiError('No such vendor exists', 401);
+    
     return await prisma.eventVendor.create({
         data: {
-            event_id: payload.event_id,
-            vendor_id: payload.vendor_id,
             invested_amount: payload.invested_amount,
-            service_type: payload.,
-            earned_amount: payload.earned_amount
+            service_type: payload.service_type,
+            earned_amount: payload.earned_amount,
+            event: {
+                connect: { id: payload.event_id }, 
+            },
+            vendor: { 
+                connect: { id: response.vendor.id } }
         }
     })
 }
 
-export const getVendorForEvent = async(eventId: number) => {
+
+export const ServicedEvents = async(vendorId: number) => {
+    const vendor = await prisma.vendor.findFirst({
+        where: {userId: vendorId}
+    })
+
     return await prisma.eventVendor.findMany({
         where: {
-            event_id: eventId
-        },
-        include: {
-            vendor: true
+            vendor_id: vendor?.id
         }
     })
+}
+
+
+export const profileUpdate = async(vendorId: number, payload: vendorData) => {
+
+    const vendorFound = await prisma.vendor.findFirst({
+        where: {
+            userId: vendorId
+        }
+    })
+
+  const { fees, ...rest } = payload;
+
+  const dataToUpdate = Object.fromEntries(
+    Object.entries({ fees, ...rest }).filter(([_, v]) => v !== undefined)
+  );
+
+  if(!vendorFound) throw new ApiError("Not found", 401);
+  if (JSON.stringify(dataToUpdate) === "{}") throw new ApiError("No fields passed", 400);
+
+  return await prisma.sponsor.update({
+    where: {
+        id: vendorFound.id
+    },
+    data: dataToUpdate
+  })
 }

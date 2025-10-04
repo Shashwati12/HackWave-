@@ -6,6 +6,8 @@ import {
   FaShareAlt,
 } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import { Background } from "../components/ShootingStar";
+import RegisterForm from "../components/User/RegisterEvent";
 
 type EventType = "Hackathon" | "Workshop" | "Cultural" | "Sports" | "Seminar";
 
@@ -82,6 +84,15 @@ const EventsPage = () => {
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
   const [expandedEvent, setExpandedEvent] = useState<Event | null>(null);
   const [countdowns, setCountdowns] = useState<{ [key: number]: string }>({});
+  const [ openRegistration , setRegistrationform] = useState(false);
+  
+   const handleSuccess = () => {
+    console.log("Registration completed successfully!");
+  };
+
+{/* Registration Form Modal */}
+
+
 
   // Live countdown
   useEffect(() => {
@@ -116,8 +127,7 @@ const EventsPage = () => {
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden p-6">
       {/* Background */}
-      <div className="absolute -top-40 -left-40 w-[40rem] h-[40rem] rounded-full bg-gradient-to-r from-[#36C1F6]/50 via-[#16D3AC]/40 to-[#657FFF]/30 filter blur-3xl opacity-50 animate-spin-slow"></div>
-      <div className="absolute -bottom-48 -right-48 w-[36rem] h-[36rem] rounded-full bg-gradient-to-tr from-[#16D3AC]/50 via-[#36C1F6]/40 to-[#657FFF]/30 filter blur-3xl opacity-40 animate-spin-slow"></div>
+<Background />
 
       <h1
         style={{ fontFamily: "Nippo, sans-serif" }}
@@ -365,10 +375,7 @@ const EventsPage = () => {
                 <FaShareAlt /> Share
               </button>
               <button
-                onClick={() =>
-                  expandedEvent?.registrationLink &&
-                  window.open(expandedEvent.registrationLink, "_blank")
-                }
+               onClick={ () => {  console.log(expandedEvent) ; setRegistrationform(true)}}
                 className="bg-[#657FFF] text-white px-4 py-2 rounded-xl font-semibold hover:scale-105 transition-transform"
               >
                 Register
@@ -386,6 +393,14 @@ const EventsPage = () => {
         .rotate-y-180 { transform: rotateY(180deg); }
         .duration-700 { transition: transform 0.7s; }
       `}</style>
+
+
+
+      {openRegistration && expandedEvent && (
+  <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center z-[100] p-4">
+    <RegisterForm event={expandedEvent} onSuccess={handleSuccess} />
+  </div>
+)}
     </div>
   );
 };
