@@ -1,6 +1,5 @@
 import { Ticket, Calendar, Users, BarChart3, ArrowRight } from 'lucide-react';
 import { Background } from '../components/ShootingStar';
-import { FloatingNavbar } from '../components/Navbar';
 
 export const Home = () => {
   return (
