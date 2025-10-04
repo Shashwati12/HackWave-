@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import {
   motion,
   AnimatePresence,
@@ -42,6 +43,7 @@ export const FloatingNav: React.FC<FloatingNavProps> = ({
     }
   });
 
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -64,7 +66,10 @@ export const FloatingNav: React.FC<FloatingNavProps> = ({
           </a>
         ))}
 
-        <button className="relative px-6 py-3 text-base font-medium border rounded-full bg-cyan-500 border-neutral-200 dark:border-white/[0.2] text-black dark:text-white">
+        <button
+         onClick={() => window.location.href = "/login"}
+        className="relative px-6 py-3 text-base font-medium border rounded-full bg-cyan-500 border-neutral-200 dark:border-white/[0.2] text-black dark:text-white"
+         >
           <span>Login</span>
           <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px h-px bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
         </button>

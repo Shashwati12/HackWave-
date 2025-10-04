@@ -7,8 +7,9 @@ import { Input } from "../ui/input"
 import { Label } from "@radix-ui/react-label"
 import { Separator } from "../ui/separator"
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
-import { registrationApi, authApi } from "../../lib/api"
+// import { registrationApi, authApi } from "../../lib/api"
 import toast from "react-hot-toast"
+import { useAuth } from "../../context/useAuth"
 
 // ------------------ Types ------------------
 
@@ -28,7 +29,7 @@ interface EventType {
 }
 
 interface RegisterFormProps {
-  event: EventType
+  event: EventType | null
   onSuccess?: (data: any) => void
 }
 
@@ -54,21 +55,23 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
   const [errors, setErrors] = useState<Record<string, string | null>>({})
   const [currentUser, setCurrentUser] = useState<UserType | null>(null)
 
+  const { user } = useAuth();
+
   // ------------------ Fetch current user ------------------
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const response = await authApi.getProfile()
-        if (response.data) {
-          setCurrentUser(response.data as UserType)
-        }
-      } catch (error) {
-        console.error("Error fetching current user:", error)
-        toast.error("Failed to fetch user profile")
-      }
-    }
-    fetchCurrentUser()
-  }, [])
+  // useEffect(() => {
+  //   const fetchCurrentUser = async () => {
+  //     try {
+  //       const response = await authApi.getProfile()
+  //       if (response.data) {
+  //         setCurrentUser(response.data as UserType)
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching current user:", error)
+  //       toast.error("Failed to fetch user profile")
+  //     }
+  //   }
+  //   fetchCurrentUser()
+  // }, [])
 
   const isTeamEvent = event.teamEvent
 
@@ -82,113 +85,114 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
     }
   }, [isTeamEvent, currentUser])
 
-  // ------------------ Search user ------------------
-  const handleSearchUser = async (query: string) => {
-    setSearchQuery(query)
-    if (query.length > 2) {
-      setIsSearching(true)
-      try {
-        if (query.includes("@")) {
-          const response = await authApi.getUserIdByEmail(query)
-          if (response.data) {
-            const foundUser = response.data as UserType
 
-            // Prevent duplicate or self
-            if (
-              formData.teamMembers.some((member) => member.id === foundUser.id) ||
-              foundUser.id === currentUser?.id
-            ) {
-              setSearchResults([])
-              toast.info("This user is already part of your team")
-              setIsSearching(false)
-              return
-            }
+  // // ------------------ Search user ------------------
+  // const handleSearchUser = async (query: string) => {
+  //   setSearchQuery(query)
+  //   if (query.length > 2) {
+  //     setIsSearching(true)
+  //     try {
+  //       if (query.includes("@")) {
+  //         const response = await authApi.getUserIdByEmail(query)
+  //         if (response.data) {
+  //           const foundUser = response.data as UserType
 
-            // Check registration
-            try {
-              const registrationCheck = await registrationApi.checkUserEventRegistration(
-                foundUser.id,
-                event.id
-              )
+  //           // Prevent duplicate or self
+  //           if (
+  //             formData.teamMembers.some((member) => member.id === foundUser.id) ||
+  //             foundUser.id === currentUser?.id
+  //           ) {
+  //             setSearchResults([])
+  //             toast.info("This user is already part of your team")
+  //             setIsSearching(false)
+  //             return
+  //           }
 
-              if (registrationCheck.data && registrationCheck.data.isRegistered) {
-                setSearchResults([])
-                toast.warning("This user is already registered for this event in another team")
-                setIsSearching(false)
-                return
-              }
+  //           // Check registration
+  //           try {
+  //             const registrationCheck = await registrationApi.checkUserEventRegistration(
+  //               foundUser.id,
+  //               event.id
+  //             )
 
-              setSearchResults([foundUser])
-            } catch (regError) {
-              console.error("Error checking registration:", regError)
-              setSearchResults([foundUser])
-              toast.warning("Could not verify user's registration status")
-            }
-          } else {
-            setSearchResults([])
-          }
-        } else {
-          toast.info("Please enter a complete email address to find users")
-          setSearchResults([])
-        }
-      } catch (error: any) {
-        console.error("Error searching users:", error)
-        if (error.response?.status === 404) {
-          toast.error("No user found with this email address")
-        } else {
-          toast.error("Failed to search by email")
-        }
-        setSearchResults([])
-      } finally {
-        setIsSearching(false)
-      }
-    } else {
-      setSearchResults([])
-      setIsSearching(false)
-    }
-  }
+  //             if (registrationCheck.data && registrationCheck.data.isRegistered) {
+  //               setSearchResults([])
+  //               toast.warning("This user is already registered for this event in another team")
+  //               setIsSearching(false)
+  //               return
+  //             }
 
-  // ------------------ Team Members ------------------
-  const handleAddTeamMember = (user: UserType) => {
-    if (
-      formData.teamMembers.some((member) => member.id === user.id) ||
-      user.id === currentUser?.id
-    ) {
-      return
-    }
+  //             setSearchResults([foundUser])
+  //           } catch (regError) {
+  //             console.error("Error checking registration:", regError)
+  //             setSearchResults([foundUser])
+  //             toast.warning("Could not verify user's registration status")
+  //           }
+  //         } else {
+  //           setSearchResults([])
+  //         }
+  //       } else {
+  //         toast.info("Please enter a complete email address to find users")
+  //         setSearchResults([])
+  //       }
+  //     } catch (error: any) {
+  //       console.error("Error searching users:", error)
+  //       if (error.response?.status === 404) {
+  //         toast.error("No user found with this email address")
+  //       } else {
+  //         toast.error("Failed to search by email")
+  //       }
+  //       setSearchResults([])
+  //     } finally {
+  //       setIsSearching(false)
+  //     }
+  //   } else {
+  //     setSearchResults([])
+  //     setIsSearching(false)
+  //   }
+  // }
 
-    const newMember: UserType = { id: user.id, name: user.name, email: user.email }
-    setFormData({
-      ...formData,
-      teamMembers: [...formData.teamMembers, newMember],
-    })
-    setSearchQuery("")
-    setSearchResults([])
-  }
+  // // ------------------ Team Members ------------------
+  // const handleAddTeamMember = (user: UserType) => {
+  //   if (
+  //     formData.teamMembers.some((member) => member.id === user.id) ||
+  //     user.id === currentUser?.id
+  //   ) {
+  //     return
+  //   }
 
-  const handleRemoveTeamMember = (index: number) => {
-    const updatedMembers = [...formData.teamMembers]
-    updatedMembers.splice(index, 1)
-    setFormData({
-      ...formData,
-      teamMembers: updatedMembers,
-    })
-  }
+  //   const newMember: UserType = { id: user.id, name: user.name, email: user.email }
+  //   setFormData({
+  //     ...formData,
+  //     teamMembers: [...formData.teamMembers, newMember],
+  //   })
+  //   setSearchQuery("")
+  //   setSearchResults([])
+  // }
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData({
-      ...formData,
-      [name]: value,
-    })
+  // const handleRemoveTeamMember = (index: number) => {
+  //   const updatedMembers = [...formData.teamMembers]
+  //   updatedMembers.splice(index, 1)
+  //   setFormData({
+  //     ...formData,
+  //     teamMembers: updatedMembers,
+  //   })
+  // }
 
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: null,
-      })
-    }
-  }
+  // const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target
+  //   setFormData({
+  //     ...formData,
+  //     [name]: value,
+  //   })
+
+  //   if (errors[name]) {
+  //     setErrors({
+  //       ...errors,
+  //       [name]: null,
+  //     })
+  //   }
+  // }
 
   // ------------------ Submit ------------------
   const handleSubmit = async (e: FormEvent) => {
@@ -257,18 +261,18 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
     }
   }
 
-  const isTeamValid = (): boolean => {
-    if (!isTeamEvent) return true
-    if (!formData.teamName.trim()) return false
+  // const isTeamValid = (): boolean => {
+  //   if (!isTeamEvent) return true
+  //   if (!formData.teamName.trim()) return false
 
-    const totalTeamSize = formData.teamMembers.length + 1
-    const minTeamSize = event.min_team_size || 1
-    if (totalTeamSize < minTeamSize) return false
-    if (event.max_team_size && totalTeamSize > event.max_team_size) return false
-    return true
-  }
+  //   const totalTeamSize = formData.teamMembers.length + 1
+  //   const minTeamSize = event.min_team_size || 1
+  //   if (totalTeamSize < minTeamSize) return false
+  //   if (event.max_team_size && totalTeamSize > event.max_team_size) return false
+  //   return true
+  // }
 
-  if (!currentUser) {
+  if (!user) {
     return <div className="p-4 text-center">Loading your profile...</div>
   }
 
@@ -290,8 +294,8 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
       <div className="space-y-2">
         <h3 className="font-semibold text-lg text-[#003366]">Your Information</h3>
         <div className="bg-white p-3 rounded-md border border-blue-100">
-          <div className="font-medium text-[#003366]">{currentUser.name}</div>
-          <div className="text-sm text-gray-500">{currentUser.email}</div>
+          <div className="font-medium text-[#003366]">{user.name}</div>
+          <div className="text-sm text-gray-500">{user.email}</div>
           {isTeamEvent && <div className="text-xs text-green-600">Team Leader</div>}
         </div>
 
@@ -303,7 +307,7 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
               name="participantPhone"
               type="tel"
               value={formData.participantPhone}
-              onChange={handleInputChange}
+              // onChange={handleInputChange}
               required
               className="bg-[#e0f2fe] text-[#003366]"
             />
@@ -331,7 +335,7 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
                 id="teamName"
                 name="teamName"
                 value={formData.teamName}
-                onChange={handleInputChange}
+                // onChange={handleInputChange}
                 required
                 className="bg-[#e0f2fe] text-[#003366]"
                 placeholder="Enter your team name"
@@ -353,8 +357,8 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
               <div className="flex items-center gap-2 bg-blue-50 p-2 rounded-md border border-blue-200 mb-3">
                 <User className="h-4 w-4 text-blue-500" />
                 <div className="flex-grow">
-                  <div className="font-medium text-[#003366]">{currentUser.name} (You)</div>
-                  <div className="text-xs text-gray-500">{currentUser.email}</div>
+                  <div className="font-medium text-[#003366]">{user.name} (You)</div>
+                  <div className="text-xs text-gray-500">{user.email}</div>
                 </div>
               </div>
 
@@ -370,7 +374,7 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
                         type="button" 
                         variant="ghost" 
                         size="icon" 
-                        onClick={() => handleRemoveTeamMember(index)}
+                        // onClick={() => handleRemoveTeamMember(index)}
                       >
                         <X className="h-4 w-4 text-gray-500" />
                       </Button>
@@ -410,7 +414,7 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
       />
       <Button 
         type="button"
-        onClick={() => handleSearchUser(searchQuery)}
+        // onClick={() => handleSearchUser(searchQuery)}
         className="ml-2 bg-blue-600 hover:bg-blue-700 text-white"
       >
         Search
@@ -432,7 +436,7 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
             <li
               key={user.id}
               className="p-2 hover:bg-[#d1d5db] cursor-pointer flex justify-between items-center"
-              onClick={() => handleAddTeamMember(user)}
+              // onClick={() => handleAddTeamMember(user)}
             >
               <div>
                 <div className="font-medium text-[#003366]">{user.name}</div>
@@ -459,12 +463,12 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
       )}
 
       {/* Payment Section - Only show if event has a registration fee */}
-      {!event?.isFree && event?.registration_fee > 0 && (
+      {!event?.isFree && (
         <>
           <Separator />
           <div className="space-y-2">
             <h3 className="font-semibold text-lg text-[#003366]">Payment Information</h3>
-            <p className="text-sm text-gray-600">Registration fee: ${event.registration_fee}</p>
+            <p className="text-sm text-gray-600">Registration fee: 76788</p>
 
             <RadioGroup
               defaultValue="online"
@@ -490,16 +494,17 @@ export default function RegisterForm({ event, onSuccess }: RegisterFormProps) {
       <div className="flex justify-end mt-6">
         <Button 
           type="submit" 
-          disabled={isRegistering || !isTeamValid()} 
-          className={`${
-            isTeamValid() 
-              ? "bg-blue-600 hover:bg-blue-700" 
-              : "bg-gray-400 cursor-not-allowed"
-          } text-white font-medium px-4 py-2 rounded-md`}
+          disabled={isRegistering } 
+          // className={`${
+          //   isTeamValid() 
+          //     ? "bg-blue-600 hover:bg-blue-700" 
+          //     : "bg-gray-400 cursor-not-allowed"
+          // } text-white font-medium px-4 py-2 rounded-md`}
         >
           {isRegistering ? (
             <>
-              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"></div>
+              <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white"
+                ></div>
               Registering...
             </>
           ) : (
