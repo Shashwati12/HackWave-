@@ -6,9 +6,15 @@ export interface AuthRouteProps {
 }
 
 export interface User {
-  id: string;
+  id: number;
   name: string;
+  email: string;
+  gender: string;
   role: string;
+  date_of_birth: string;
+  image_url: string | null;
+  created_at: string;
+  token: string;
 }
 
 export interface AuthContextType {

@@ -10,6 +10,8 @@ import AnalyticsDashboard from "../pages/Analytics";
 import Sponser from "../components/Host/Sponser";
 import { Home } from "../pages/Home";
 import EventPage from "../pages/EventPage";
+import LoginPage from "../pages/LoginPage";
+import RegisterForm from "../components/User/RegisterEvent";
 
 
 
@@ -22,6 +24,11 @@ export const Routes: AppRoute[] = [
   {
     path: "/events",
     element: <EventPage />,
+    public: true,
+  },
+  {
+    path : '/login',
+    element : <LoginPage/>,
     public: true,
   },
   {
