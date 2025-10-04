@@ -2,13 +2,9 @@ import { prisma } from "../config/prisma.config";
 import type { RegisterTeamParams } from "../types/registration.types";
 
 
-export const registerTeamForEvent = async ({
-  event_id,
-  team_name,
-  leader_id,
-  member_ids,
-}: RegisterTeamParams) => {
+export const registerTeamForEvent = async (RegistrationData: RegisterTeamParams) => {
  
+  const {leader_id, event_id,team_name, member_ids} = RegistrationData;
   const event = await prisma.event.findUnique({
     where: { id: event_id },
   });
@@ -27,17 +23,29 @@ export const registerTeamForEvent = async ({
   });
 
 
-  if (!member_ids.includes(leader_id)) {
-    member_ids.push(leader_id);
+  if(member_ids) {
+    if (!member_ids.includes(leader_id)) {
+      member_ids.push(leader_id);
+    }
+
+    await prisma.teamMember.createMany({
+      data: member_ids.map((member_id) => ({
+        team_id: team.id,
+        member_id,      
+        event_id,
+      })),
+      skipDuplicates: true,
+    });    
+    return { event, team };
   }
+  
 
   await prisma.teamMember.createMany({
-    data: member_ids.map((member_id) => ({
+    data: {
       team_id: team.id,
-      member_id,      
       event_id,
-    })),
-    skipDuplicates: true,
+      member_id: leader_id
+    },
   });
 
   return { event, team };

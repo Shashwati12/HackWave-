@@ -24,6 +24,13 @@ export const initiateRequest = async(senderId: number, receiverId: number) => {
 }
 
 export const acceptSponsorship = async(payload: sponsorEventCollab) => {
+
+    let response = await prisma.user.findFirst({
+        where: {id: payload.sponsor_id},
+        include: {sponsor :true}
+    });
+    if(!response?.sponsor) throw new ApiError('No such vendor exists', 401);
+
     return await prisma.eventSponsor.create({
         data: {
             contribution_amount: payload.contribution_amount,
@@ -32,7 +39,7 @@ export const acceptSponsorship = async(payload: sponsorEventCollab) => {
                 connect: { id: payload.event_id }, 
             },
             sponsor: {
-                connect: {userId: payload.sponsor_id }, 
+                connect: {id: response.sponsor.id }, 
             }
         }
     })

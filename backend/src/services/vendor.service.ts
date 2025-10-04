@@ -29,6 +29,14 @@ export const initiateRequest = async(eventId: number, vendorId: number) => {
 }
 
 export const acceptRequest = async(payload: vendorEventCollab) => {
+
+    const response = await prisma.user.findFirst({
+    where: { id: payload.vendor_id },
+    include: {vendor: true}
+    });
+
+    if(!response?.vendor) throw new ApiError('No such vendor exists', 401);
+    
     return await prisma.eventVendor.create({
         data: {
             invested_amount: payload.invested_amount,
@@ -37,9 +45,8 @@ export const acceptRequest = async(payload: vendorEventCollab) => {
             event: {
                 connect: { id: payload.event_id }, 
             },
-            vendor: {
-                connect: {userId: payload.vendor_id }, 
-            }
+            vendor: { 
+                connect: { id: response.vendor.id } }
         }
     })
 }

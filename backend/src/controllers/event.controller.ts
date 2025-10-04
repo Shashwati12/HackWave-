@@ -24,7 +24,7 @@ export const createEvent = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const eventData: EventData = { ...req.body.eventData, image_url: imageUrl };
-  console.log("from conroller" , eventData.event_name);
+
   const event = await eventService.createEvent(eventData, userId);
 
   res.status(201).json(event);
