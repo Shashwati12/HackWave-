@@ -25,36 +25,36 @@ interface FormData {
   max_team_size: string;
   department: string;
   registration_fee: string;
-  image_url: string;
   rules: string;
   organizer: string;
   layer: string;
   max_participants: string;
   eligibility: string;
+  image?: File | null; // 👈 NEW
 }
 
 export default function HostEvent() {
   const [formData, setFormData] = useState<FormData>({
-    event_name: "",
-    event_description: "",
-    event_type: "",
-    category: "",
-    venue: "",
-    important_dates: "",
-    registration_deadline: "",
-    prizes: "",
-    contact_info: "",
-    participation_type: "individual",
-    max_team_size: "",
-    department: "",
-    registration_fee: "",
-    image: "",
-    rules: "",
-    organizer: "",
-    layer: "",
-    max_participants: "",
-    eligibility: "",
-  });
+  event_name: "",
+  event_description: "",
+  event_type: "",
+  category: "",
+  venue: "",
+  important_dates: "",
+  registration_deadline: "",
+  prizes: "",
+  contact_info: "",
+  participation_type: "individual",
+  max_team_size: "",
+  department: "",
+  registration_fee: "",
+  rules: "",
+  organizer: "",
+  layer: "",
+  max_participants: "",
+  eligibility: "",
+  image: null, // 👈 store actual file
+});
 
   
 
@@ -69,54 +69,67 @@ export default function HostEvent() {
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setPreview(url);
-      setFormData((prev) => ({ ...prev, image_url: file.name }));
-    }
-  };
+  const file = e.target.files?.[0];
+  if (file) {
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    setFormData((prev) => ({ ...prev, image: file })); // 👈 store File object
+  }
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  e.preventDefault();
+  setIsSubmitting(true);
 
-    console.log("Submitting Event Data:", formData);
+  try {
+    const form = new FormData();
 
-    try {
-      const response = await api.post("/event", formData);
-
-      if (!response) throw new Error("Failed to create event");
-
-      alert(" Event created successfully!");
-      setFormData({
-        event_name: "",
-        event_description: "",
-        event_type: "",
-        category: "",
-        venue: "",
-        important_dates: "",
-        registration_deadline: "",
-        prizes: "",
-        contact_info: "",
-        participation_type: "individual",
-        max_team_size: "",
-        department: "",
-        registration_fee: "",
-        image: "",
-        rules: "",
-        organizer: "",
-        layer: "",
-        max_participants: "",
-        eligibility: "",
-      });
-      setPreview(null);
-    } catch (err: any) {
-      alert(err.message);
-    } finally {
-      setIsSubmitting(false);
+    // append file if selected
+    if (formData.image) {
+      form.append("image", formData.image);
     }
-  };
+
+    // append the rest of the event data
+    const { image, ...eventDetails } = formData; 
+    form.append("eventData", JSON.stringify(eventDetails));
+
+    const response = await api.post("/event", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    alert("Event created successfully!");
+
+    // reset
+    setFormData({
+      event_name: "",
+      event_description: "",
+      event_type: "",
+      category: "",
+      venue: "",
+      important_dates: "",
+      registration_deadline: "",
+      prizes: "",
+      contact_info: "",
+      participation_type: "individual",
+      max_team_size: "",
+      department: "",
+      registration_fee: "",
+      rules: "",
+      organizer: "",
+      layer: "",
+      max_participants: "",
+      eligibility: "",
+      image: null,
+    });
+    setPreview(null);
+  } catch (err: any) {
+    console.error(err);
+    alert(err.message);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-black relative overflow-x-hidden overflow-y-auto">

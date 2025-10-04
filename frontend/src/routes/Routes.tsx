@@ -14,12 +14,14 @@ import { RoleBasedProfile } from "../components/RoleBasedProfile";
 import CertificatePage from "../components/User/Certificates";
 import UserHistoryPage from "../pages/userHistory";
 import ContactPage from "../pages/ContactPage";
+import SignUpPage from "../pages/SignupPage";
 
 export const Routes: AppRoute[] = [
   { path: "/", element: <Home />, public: true },
   { path: "/events", element: <EventPage />, public: true },
   { path: "/login", element: <LoginPage />, public: true },
   { path: "/contact", element: <ContactPage />, public: true },
+  { path: "/signup", element: <SignUpPage />, public: true },
 
   {
     path: "/dashboard",

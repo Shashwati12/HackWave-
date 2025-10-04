@@ -11,7 +11,7 @@ import RegisterPage from "./RegisterPage";
 
 type EventType = "Hackathon" | "Workshop" | "Cultural" | "Sports" | "Seminar";
 
-// 1. Update Event interface
+// Event interface must match your backend schema
 interface Event {
   id: number;
   name: string;
@@ -19,7 +19,7 @@ interface Event {
   date: string;
   venue: string;
   description: string;
-  banner: string;
+  image_url: string;
   registrationOpen: boolean;
   registrationLink?: string;
   popular?: boolean;
@@ -30,57 +30,11 @@ interface Event {
   teamSize?: number;
 }
 
-const sampleEvents: Event[] = [
-  {
-    id: 1,
-    name: "AI Hackathon 2025",
-    type: "Hackathon",
-    date: "2025-11-20",
-    venue: "Tech Lab",
-    description:
-      "Solve real-world AI challenges with your team and compete for prizes.",
-    moreDetails:
-      "This hackathon will include workshops, mentorship sessions, and a final presentation to judges. Top winners get prizes and internship opportunities.",
-    banner: "https://via.placeholder.com/400x200",
-    registrationOpen: true,
-    registrationLink: "https://hackathon.com/register",
-    popular: true,
-    newEvent: true,
-    attendees: 150,
-    teamSize: 4,
-  },
-  {
-    id: 2,
-    name: "Cultural Fest",
-    type: "Cultural",
-    date: "2025-12-05",
-    venue: "Main Auditorium",
-    description: "Music, Dance & Drama performances from various colleges.",
-    moreDetails:
-      "Participate in dance battles, singing competitions, drama skits, and enjoy food stalls and games. Open to all students.",
-    banner: "https://via.placeholder.com/400x200",
-    registrationOpen: false,
-    aiSuggested: true,
-    attendees: 300,
-    teamSize: 6,
-  },
-  {
-    id: 3,
-    name: "Robotics Workshop",
-    type: "Workshop",
-    date: "2025-11-28",
-    venue: "Engineering Lab",
-    description: "Hands-on robotics experience. Learn and build robots!",
-    moreDetails:
-      "You will learn basic electronics, programming robots, and designing simple robotic systems. Materials will be provided.",
-    banner: "https://via.placeholder.com/400x200",
-    registrationOpen: true,
-    attendees: 80,
-    teamSize: 2,
-  },
-];
-
 const EventsPage = () => {
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<EventType | "All">("All");
   const [sortByPopularity, setSortByPopularity] = useState<"all" | "popular">(
@@ -91,17 +45,42 @@ const EventsPage = () => {
   const [countdowns, setCountdowns] = useState<{ [key: number]: string }>({});
   const [openRegistration, setRegistrationform] = useState(false);
 
-  
-
-  {
-    /* Registration Form Modal */
-  }
-
-  // Live countdown
+  // ✅ Fetch events from backend
   useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/v1/events"); // change to your backend route
+        if (!res.ok) throw new Error("Failed to fetch events");
+        const data = await res.json();
+
+if (Array.isArray(data)) {
+  setEvents(data);
+} else if (data.events) {
+  setEvents(data.events);
+} else if (data.data) {
+  setEvents(data.data);
+} else {
+  console.error("Unexpected backend response:", data);
+  setEvents([]);
+}
+ // backend must return { events: [...] }
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  // ✅ Live countdowns
+  useEffect(() => {
+    if (!events.length) return;
+
     const interval = setInterval(() => {
       const newCountdowns: { [key: number]: string } = {};
-      sampleEvents.forEach((event) => {
+      events.forEach((event) => {
         const diff = new Date(event.date).getTime() - Date.now();
         if (diff <= 0) newCountdowns[event.id] = "Event Passed";
         else
@@ -111,10 +90,11 @@ const EventsPage = () => {
       });
       setCountdowns(newCountdowns);
     }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
-  const filteredEvents = sampleEvents
+    return () => clearInterval(interval);
+  }, [events]);
+
+  const filteredEvents = events
     .filter(
       (event) =>
         event.name.toLowerCase().includes(search.toLowerCase()) &&
@@ -126,6 +106,22 @@ const EventsPage = () => {
     navigator.clipboard.writeText(`${window.location.href}#event-${id}`);
     alert("Event link copied!");
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-white">
+        Loading events...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-red-500">
+        Failed to load events: {error}
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden p-6">
@@ -152,7 +148,6 @@ const EventsPage = () => {
           />
         </div>
 
-        {/* Event Type Pills */}
         {["All", "Hackathon", "Workshop", "Cultural", "Sports", "Seminar"].map(
           (type) => (
             <button
@@ -169,7 +164,6 @@ const EventsPage = () => {
           )
         )}
 
-        {/* Popularity Pill */}
         <button
           onClick={() =>
             setSortByPopularity(sortByPopularity === "all" ? "popular" : "all")
@@ -202,7 +196,7 @@ const EventsPage = () => {
               {/* Front */}
               <div className="absolute w-full h-full backface-hidden bg-white/5 backdrop-blur-lg rounded-2xl overflow-hidden shadow-xl border border-white/20 flex flex-col">
                 <img
-                  src={event.banner}
+                  src={event.image_url}
                   alt={event.name}
                   className="w-full h-48 object-cover rounded-t-2xl"
                 />
@@ -244,12 +238,9 @@ const EventsPage = () => {
                   <span>Attendees: {event.attendees || 0}</span>
                   <span>{countdowns[event.id]}</span>
                 </div>
-
-                {/* ✅ Team Size line */}
                 <p className="text-sm text-[#B0B3C0] mt-1">
                   👥 Team Size: {event.teamSize || "N/A"}
                 </p>
-
                 <p className="text-xs text-[#B0B3C0] mt-2">
                   Click to expand full info
                 </p>
@@ -271,7 +262,7 @@ const EventsPage = () => {
             </button>
             <div className="flex flex-col md:flex-row gap-6">
               <img
-                src={expandedEvent.banner}
+                src={expandedEvent.image_url}
                 className="md:w-1/2 w-full rounded-lg shadow-lg"
               />
               <div className="flex-1 flex flex-col gap-2">
@@ -281,101 +272,14 @@ const EventsPage = () => {
                 <p className="text-[#B0B3C0]">{expandedEvent.description}</p>
                 <div className="flex flex-wrap gap-2 mt-2">
                   <span className="bg-white/10 backdrop-blur-sm text-[#B0B3C0] px-3 py-1 rounded-full text-sm">
-                    📅 Updated On: Oct 1, 2025
+                    📅 Date: {expandedEvent.date}
                   </span>
                   <span className="bg-white/10 backdrop-blur-sm text-[#B0B3C0] px-3 py-1 rounded-full text-sm">
                     📍 Venue: {expandedEvent.venue}
                   </span>
-
-                  {/* ✅ Team Size pill */}
                   <span className="bg-white/10 backdrop-blur-sm text-[#B0B3C0] px-3 py-1 rounded-full text-sm">
                     👥 Team Size: {expandedEvent.teamSize || "N/A"}
                   </span>
-                </div>
-              </div>
-            </div>
-            {/* Stages & Timeline */}
-            <div className="mt-6">
-              <h3 className="text-xl font-bold text-[#36C1F6] mb-3">
-                Stages & Timeline
-              </h3>
-              <div className="flex flex-col gap-3">
-                {/* Example Stage cards */}
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20">
-                  <h4 className="text-[#36C1F6] font-semibold">
-                    Stage 1: Registration
-                  </h4>
-                  <p className="text-sm text-[#B0B3C0]">
-                    Aug 25, 2025 – Sep 3, 2025
-                  </p>
-                  <p className="text-[#B0B3C0] text-sm mt-1">
-                    Register online to secure your spot in the hackathon.
-                  </p>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20">
-                  <h4 className="text-[#36C1F6] font-semibold">
-                    Stage 2: Team Formation
-                  </h4>
-                  <p className="text-sm text-[#B0B3C0]">
-                    Sep 4, 2025 – Sep 6, 2025
-                  </p>
-                  <p className="text-[#B0B3C0] text-sm mt-1">
-                    Form teams and start brainstorming ideas.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Prizes Section */}
-            <div className="mt-6">
-              <h3 className="text-xl font-bold text-[#16D3AC] mb-3">Prizes</h3>
-              <div className="grid md:grid-cols-3 gap-3">
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20 flex flex-col items-start gap-1">
-                  <span className="text-[#36C1F6] font-semibold">
-                    🏆 1st Prize
-                  </span>
-                  <span className="text-[#B0B3C0]">INR 3,00,000</span>
-                  <span className="text-xs text-[#B0B3C0]">
-                    Cash + Vouchers
-                  </span>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20 flex flex-col items-start gap-1">
-                  <span className="text-[#36C1F6] font-semibold">
-                    🏆 2nd Prize
-                  </span>
-                  <span className="text-[#B0B3C0]">INR 1,50,000</span>
-                  <span className="text-xs text-[#B0B3C0]">
-                    Cash + Vouchers
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Important Dates */}
-            <div className="mt-6">
-              <h3 className="text-xl font-bold text-[#16D3AC] mb-3">
-                Important Dates
-              </h3>
-              <div className="grid md:grid-cols-2 gap-3">
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20 flex items-center gap-2">
-                  <span>⏰</span>
-                  <div>
-                    <span className="font-semibold">
-                      Registration Deadline:
-                    </span>{" "}
-                    <span className="text-[#B0B3C0]">
-                      03 Sep 25, 11:59 PM IST
-                    </span>
-                  </div>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20 flex items-center gap-2">
-                  <span>⏰</span>
-                  <div>
-                    <span className="font-semibold">Hackathon Start:</span>{" "}
-                    <span className="text-[#B0B3C0]">
-                      20 Nov 25, 10:00 AM IST
-                    </span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -390,7 +294,6 @@ const EventsPage = () => {
               </button>
               <button
                 onClick={() => {
-                  console.log(expandedEvent);
                   setRegistrationform(true);
                 }}
                 className="bg-[#657FFF] text-white px-4 py-2 rounded-xl font-semibold hover:scale-105 transition-transform"

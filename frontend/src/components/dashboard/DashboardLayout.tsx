@@ -1,24 +1,51 @@
 "use client";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
-import { Sidebar, SidebarBody, SidebarLink } from "../ui-components/sidebar";
+import { Sidebar, SidebarBody } from "../ui-components/sidebar";
 import { IconLogout } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { cn } from "../../lib/utils";
 import { Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 
-// Role-based dashboards (used only for sidebarLinks)
-import UserDashboard from "../../pages/StudentDashboard";
-import HostDashboard from "../../pages/HostDashboard";
-import VendorDashboard from "../../pages/VendorDashboard";
-import SponsorDashboard from "../../pages/SponsorDashboard";
-import AdminDashboard from "../../pages/AdminDashboard";
+// Define sidebar links for each role
+const roleSidebarLinks = {
+  User: [
+    { label: "Profile", href: "/dashboard/profile", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "Schedule", href: "/dashboard/schedule", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "History", href: "/dashboard/history", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "Certificates", href: "/dashboard/certificates", icon: <Sparkles className="h-5 w-5" /> },
+  ],
+  Host: [
+    { label: "Profile", href: "/dashboard/profile", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "Host Event", href: "/dashboard/hostEvent", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "Schedule", href: "/dashboard/schedule", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "History", href: "/dashboard/history", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "Analytics", href: "/dashboard/analytics", icon: <Sparkles className="h-5 w-5" /> },
+  ],
+  Vendor: [
+    { label: "Profile", href: "/dashboard/profile", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "Schedule", href: "/dashboard/schedule", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "History", href: "/dashboard/history", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "Analytics", href: "/dashboard/analytics", icon: <Sparkles className="h-5 w-5" /> },
+  ],
+  Sponsor: [
+    { label: "Profile", href: "/dashboard/profile", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "Schedule", href: "/dashboard/schedule", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "Analytics", href: "/dashboard/analytics", icon: <Sparkles className="h-5 w-5" /> },
+  ],
+  Admin: [
+    { label: "Profile", href: "/dashboard/profile", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "Host Event", href: "/dashboard/hostEvent", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "Schedule", href: "/dashboard/schedule", icon: <Sparkles className="h-5 w-5" /> },
+    { label: "History", href: "/dashboard/history", icon: <Sparkles className="h-5 w-5" /> },
+  ],
+};
 
 const DashboardLayout = () => {
-  const location = useLocation();
   const { user, loading, logout } = useAuth();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
+  const navigate = useNavigate();
 
   if (loading) {
     return (
@@ -31,31 +58,12 @@ const DashboardLayout = () => {
     );
   }
 
-  // Determine role-based sidebar menu
-  const RoleDashboard =
-  user?.role === "User"
-    ? UserDashboard
-    : user?.role === "Host"
-    ? HostDashboard
-    : user?.role === "Vendor"
-    ? VendorDashboard
-    : user?.role === "Sponsor"
-    ? SponsorDashboard
-    : user?.role === "Admin"
-    ? AdminDashboard
-    : null;
+  const sidebarLinks = roleSidebarLinks[user?.role] || [];
 
-
-  const sidebarLinks = RoleDashboard?.sidebarMenu || [];
-
-  const logoutLink = {
-  label: "Logout",
-  href: "#", // prevent navigation
-  icon: <IconLogout className="h-5 w-5 text-red-300" />,
-  onClick: () => {
-    logout(); // ✅ call context logout
-  },
-};
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <div className="relative flex h-screen overflow-hidden bg-black">
@@ -73,110 +81,87 @@ const DashboardLayout = () => {
       </div>
 
       {/* Sidebar */}
-      <div className="relative z-20 flex-shrink-0">
-        <Sidebar open={open} setOpen={setOpen}>
-          <SidebarBody className="justify-between gap-10 relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] to-white/[0.02] backdrop-blur-xl border-r border-white/10" />
-
-            <div className="relative flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
-              {/* Logo */}
-              <div className="mb-8 flex justify-center">
-                {open ? <Logo /> : <LogoIcon />}
-              </div>
-
-              {/* Navigation Links */}
-              <div className="flex flex-col gap-2">
-                {sidebarLinks.map((link, idx) => (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: idx * 0.05 }}
-                    className={cn(!open && "flex justify-center")}
+      <Sidebar open={open} setOpen={setOpen}>
+        <SidebarBody className="flex flex-col justify-between h-full relative">
+          {/* Top: Logo and Links */}
+          <div className="relative flex flex-col gap-6">
+            <div className="flex justify-center mb-8">{open ? <Logo /> : <LogoIcon />}</div>
+            <div className="flex flex-col gap-2">
+              {sidebarLinks.map((link, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className={cn(!open && "flex justify-center")}
+                >
+                  <Link
+                    to={link.href}
+                    className="flex items-center gap-2 text-white hover:text-purple-300 p-2 rounded-md w-full"
                   >
-                    <SidebarLink link={link} />
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Logout Link */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className={cn("mt-4", !open && "flex justify-center")}
-              >
-                <SidebarLink link={logoutLink}  />
-              </motion.div>
+                    {link.icon}
+                    {open && <span>{link.label}</span>}
+                  </Link>
+                </motion.div>
+              ))}
             </div>
+          </div>
 
-            {/* User Avatar Link */}
-            <div className={cn("relative", !open && "flex justify-center")}>
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className={cn(
-                  "rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30 backdrop-blur-sm hover:border-purple-500/50 transition-all",
-                  open ? "p-3" : "p-2"
-                )}
-              >
-                <SidebarLink
-                  link={{
-                    label: user?.name || "User",
-                    href: "/dashboard/profile",
-                    icon: (
-                      <div className="relative">
-                        <img
-                          src="https://assets.aceternity.com/manu.png"
-                          className={cn(
-                            "rounded-full ring-2 ring-purple-500/50",
-                            open ? "h-10 w-10" : "h-11 w-11"
-                          )}
-                          alt="Avatar"
-                        />
-                        <div
-                          className={cn(
-                            "absolute bg-green-500 rounded-full border-2 border-black",
-                            open
-                              ? "-bottom-1 -right-1 w-4 h-4"
-                              : "-bottom-0.5 -right-0.5 w-3 h-3"
-                          )}
-                        ></div>
-                      </div>
-                    ),
-                  }}
-                />
-              </motion.div>
-            </div>
-
-            {/* Sidebar Toggle */}
-            <button
-              onClick={() => setOpen(!open)}
-              className="absolute -right-3 top-8 w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg shadow-purple-500/30 hover:scale-110 transition-transform z-50"
-            >
-              {open ? (
-                <ChevronLeft className="w-4 h-4 text-white" />
-              ) : (
-                <ChevronRight className="w-4 h-4 text-white" />
+          {/* Bottom: Avatar + Logout */}
+          <div className="flex flex-col gap-4 items-center">
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              className={cn(
+                "rounded-2xl bg-gradient-to-br from-purple-500/20 to-blue-500/20 border border-purple-500/30 backdrop-blur-sm hover:border-purple-500/50 transition-all",
+                open ? "p-3" : "p-2"
               )}
-            </button>
-          </SidebarBody>
-        </Sidebar>
-      </div>
+            >
+              <Link
+                to="/dashboard/profile"
+                className="flex items-center gap-2"
+              >
+                <img
+                  src="https://assets.aceternity.com/manu.png"
+                  className={cn("rounded-full ring-2 ring-purple-500/50", open ? "h-10 w-10" : "h-11 w-11")}
+                  alt="Avatar"
+                />
+                {open && <span className="text-white">{user?.name}</span>}
+              </Link>
+            </motion.div>
 
-      {/* Routed Page Content */}
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-red-300 hover:text-red-400 p-2 rounded-md w-full justify-center"
+            >
+              <IconLogout className="h-5 w-5" />
+              {open && <span>Logout</span>}
+            </button>
+          </div>
+
+          {/* Sidebar toggle */}
+          <button
+            onClick={() => setOpen(!open)}
+            className="absolute -right-3 top-8 w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg shadow-purple-500/30 hover:scale-110 transition-transform z-50"
+          >
+            {open ? <ChevronLeft className="w-4 h-4 text-white" /> : <ChevronRight className="w-4 h-4 text-white" />}
+          </button>
+        </SidebarBody>
+      </Sidebar>
+
+      {/* Main content */}
       <div className="relative z-10 flex-1 min-h-0 overflow-y-auto h-full p-4 md:p-8">
         <div className="max-w-[1600px] mx-auto">
-          <Outlet /> {/* ✅ Always render nested routes here */}
+          <Outlet />
         </div>
       </div>
     </div>
   );
 };
 
-// Logo Components
+// Logo components
 export const Logo = () => (
-  <a
-    href="/dashboard"
+  <Link
+    to="/dashboard"
     className="flex items-center space-x-3 py-2 px-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 hover:border-purple-500/50 transition-all group"
   >
     <div className="relative">
@@ -185,26 +170,22 @@ export const Logo = () => (
       </div>
       <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-black animate-pulse"></div>
     </div>
-    <motion.div
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      className="flex flex-col"
-    >
-      <span className="text-sm font-bold text-white">EventHub</span>
+    <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}>
+      <span className="text-sm font-bold text-white">Unify Event</span>
     </motion.div>
-  </a>
+  </Link>
 );
 
 export const LogoIcon = () => (
-  <a
-    href="/dashboard"
+  <Link
+    to="/dashboard"
     className="flex items-center justify-center mx-auto rounded-xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 hover:border-purple-500/50 transition-all group w-12 h-12"
   >
     <div className="relative">
       <Sparkles className="w-5 h-5 text-purple-400 group-hover:text-purple-300 transition-colors group-hover:scale-110 transition-transform" />
       <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
     </div>
-  </a>
+  </Link>
 );
 
 export default DashboardLayout;
