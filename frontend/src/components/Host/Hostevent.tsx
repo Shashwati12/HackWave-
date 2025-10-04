@@ -1,18 +1,10 @@
 import { useState } from "react";
 import {
   Calendar,
-  Clock,
-  MapPin,
   Users,
-  DollarSign,
   Image as ImageIcon,
-  FileText,
-  Mail,
   Award,
-  Shield,
-  Building,
   Sparkles,
-  Upload,
   X,
   ClipboardList,
 } from "lucide-react";

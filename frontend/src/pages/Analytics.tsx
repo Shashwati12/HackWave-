@@ -24,7 +24,7 @@ import {
 import { Background } from '../components/ShootingStar';
 
 interface DashboardProps {
-  role: 'host' | 'vendor' | 'sponser';
+  role: 'host' | 'vendor' | 'sponsor';
 }
 
 const roleConfigs = {
@@ -77,9 +77,9 @@ const roleConfigs = {
       ],
     },
   },
-  sponser: {
+  sponsor: {
     icon: Megaphone,
-    title: 'Sponser Dashboard',
+    title: 'Sponsor Dashboard',
     color: '#EC4899',
     stats: [
       { label: 'Total Reach', value: '85.2K', change: '+34%', icon: Megaphone },
