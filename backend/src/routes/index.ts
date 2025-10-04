@@ -7,6 +7,7 @@ import { auth } from '../middleware/auth.middleware';
 import authRouter from './auth.routes';
 import registrationRouter from './registration.routes';
 import eventRouter from './event.routes';
+import chatRoute from './chat.routes';
 
 export default function routes(upload: Multer, supabase : SupabaseClient) {
   const router = Router();
@@ -17,6 +18,7 @@ export default function routes(upload: Multer, supabase : SupabaseClient) {
   router.use(auth)
   router.use('/registration',registrationRouter());
   router.use('/event', eventRouter(upload, supabase));
+  router.use('/chat',chatRoute());
   
   return router;
 }
